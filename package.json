@@ -1,19 +1,31 @@
 {
-  "name": "monorepo-template",
+  "name": "@lukasbriza/monorepo-template",
+  "version": "0.0.0",
   "private": true,
+  "description": "Universal monorepo template for application from @lukasbriza",
+  "author": "https://github.com/lukasbriza",
+  "type": "module",
+  "workspaces": [
+    "./apps/*",
+    "./packages/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare:husky": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "19.3.0",
+    "@commitlint/config-conventional": "19.2.2",
+    "husky": "9.0.11",
     "prettier": "^3.2.5",
     "turbo": "^2.0.6",
     "typescript": "^5.4.5"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   }
 }
