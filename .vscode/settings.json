@@ -3,5 +3,7 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "prettier.configPath": ".",
+  "prettier.useEditorConfig": false
 }

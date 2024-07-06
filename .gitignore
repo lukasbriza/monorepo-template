@@ -5,6 +5,15 @@ node_modules
 .pnp
 .pnp.js
 
+# Temporary files
+*.log
+.DS_Store
+.eslintcache
+.turbo
+temp
+tsconfig.build.tsbuildinfo
+tsconfig.tsbuildinfo
+
 # Local env files
 .env
 .env.local
