@@ -1,7 +1,7 @@
 {
   "name": "@lukasbriza/eslint-config",
   "version": "0.0.0",
-  "description": "ESLint configuration for ApiTree projects.",
+  "description": "ESLint configuration for projects.",
   "sideEffects": false,
   "type": "commonjs",
   "main": "./index.js",
@@ -12,7 +12,8 @@
     "dist",
     "index.js",
     "nextjs.js",
-    "react.js"
+    "react.js",
+    "storybook.js"
   ],
   "scripts": {
     "prebuild": "rimraf dist tsconfig.build.tsbuildinfo",

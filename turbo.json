@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**/*", "tsconfig.tsbuildinfo", "tsconfig.build.tsbuildinfo"]
     },
     "lint": {
       "dependsOn": ["^build"],
@@ -16,6 +16,13 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "ts": {
+      "dependsOn": ["^build"],
+      "outputs": ["tsconfig.tsbuildinfo"]
+    },
+    "cleanup": {
+      "cache": false
     }
   }
 }

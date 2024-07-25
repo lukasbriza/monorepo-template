@@ -15,6 +15,7 @@
     "app.json",
     "base.json",
     "library.json",
+    "cjs-library.json",
     "nextjs.json"
   ],
   "scripts": {
