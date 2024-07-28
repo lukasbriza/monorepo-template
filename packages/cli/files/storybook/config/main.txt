@@ -4,7 +4,7 @@ import type { StorybookConfig } from '@storybook/react-vite'
 import type { StoriesEntry } from '@storybook/types'
 
 // ADD SOURCES FOR STORIES FE.: packages/components
-const packages = ['packages/components']
+const packages = ['packages/components', 'packages/theme', 'packages/icons']
 
 function titlePrefix(workspace: string) {
   const [, name] = workspace.split('/')

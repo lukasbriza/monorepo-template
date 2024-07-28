@@ -7,5 +7,6 @@ export const createDirectory = (path: string) => {
     }
   } catch (error) {
     console.error(error)
+    throw error
   }
 }

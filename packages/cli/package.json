@@ -2,7 +2,7 @@
   "name": "@lukasbriza/cli",
   "version": "0.0.0",
   "description": "CLI for apps/package creation",
-  "type": "commonjs",
+  "type": "module",
   "main": "./dist/cli.js",
   "files": [
     "dist"

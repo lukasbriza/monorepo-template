@@ -1,4 +1,6 @@
-import { copyFileSync } from 'node:fs'
+import { copyFileSync, existsSync } from 'node:fs'
+
+import ora from 'ora'
 
 import {
   babelConfigPath,
@@ -12,24 +14,30 @@ import {
   storybookMainPath,
   storybookManangerPath,
   storybookPreviewPath,
+  storybookPreviewThemePath,
   storybookThemePath,
   tsConfigPath,
+  tscWithThemePath,
   viteConfigPath,
-} from '../paths/storybook-paths'
-import { PROJECT_TYPE } from '../types'
+} from '../paths/storybook-paths.js'
+import { addTheme } from '../questions/index.js'
+import { PROJECT_TYPE } from '../types.js'
+import {
+  addConfigs,
+  APPS_PATH,
+  cleanup,
+  createDirectory,
+  installDeps,
+  PACKAGES_PATH,
+  STORYBOOK_PATH,
+} from '../utils/index.js'
 
-import { cleanup } from './cleanup'
-import { APPS_PATH, STORYBOOK_PATH } from './constants'
-import { createDirectory } from './create-directory'
-import { addConfigs, installDeps } from './pnpm-commands'
-
-export const createStorybook = async () => {
-  const { default: ora } = await import('ora')
+export const createStorybook = () => {
   const projectName = 'storybook'
   const storybookPath = `${APPS_PATH}/${projectName}`
 
-  const makeDirectorySpinner = ora('Create storybook directory...').start()
-
+  // CREATE DIRECTORY
+  const makeDirectorySpinner = ora('Create storybook directory...\n').start()
   try {
     createDirectory(storybookPath)
     makeDirectorySpinner.succeed()
@@ -39,12 +47,30 @@ export const createStorybook = async () => {
     return
   }
 
-  const copyStorybookFilesSpinner = ora('Copy storybook files...').start()
+  const searchingForThemeSpinner = ora('Searching for theme package...\n').start()
+  const hasTheme = existsSync(`${PACKAGES_PATH}/theme`)
+  let wantTheme = false
+
+  // ADD THEME SUPPORT
+  try {
+    if (!hasTheme) {
+      wantTheme = addTheme().includes('y')
+    }
+    searchingForThemeSpinner.succeed()
+  } catch {
+    searchingForThemeSpinner.fail()
+    cleanup(projectName, PROJECT_TYPE.APP)
+    cleanup('theme', PROJECT_TYPE.PROJECT)
+    return
+  }
+
+  // COPY CONFIG FILES
+  const copyStorybookFilesSpinner = ora('Copy storybook files...\n').start()
   try {
     createDirectory(`${storybookPath}/config`)
     copyFileSync(storybookMainPath, `${storybookPath}/config/main.ts`)
     copyFileSync(storybookManangerPath, `${storybookPath}/config/manager.ts`)
-    copyFileSync(storybookPreviewPath, `${storybookPath}/config/preview.tsx`)
+    copyFileSync(wantTheme ? storybookPreviewThemePath : storybookPreviewPath, `${storybookPath}/config/preview.tsx`)
     copyFileSync(storybookThemePath, `${storybookPath}/config/theme.ts`)
 
     copyFileSync(packagePath, `${STORYBOOK_PATH}/package.json`)
@@ -55,7 +81,7 @@ export const createStorybook = async () => {
     copyFileSync(babelConfigPath, `${STORYBOOK_PATH}/babel.config.js`)
     copyFileSync(lintStagetConfigPath, `${STORYBOOK_PATH}/lint-staged.config.js`)
     copyFileSync(servePath, `${STORYBOOK_PATH}/serve.json`)
-    copyFileSync(tsConfigPath, `${STORYBOOK_PATH}/tsconfig.json`)
+    copyFileSync(wantTheme ? tscWithThemePath : tsConfigPath, `${STORYBOOK_PATH}/tsconfig.json`)
     copyFileSync(viteConfigPath, `${STORYBOOK_PATH}/vite.config.ts`)
     copyStorybookFilesSpinner.succeed()
   } catch {
@@ -64,7 +90,8 @@ export const createStorybook = async () => {
     return
   }
 
-  const addConfigsSpinner = ora('Add configs...').start()
+  // ADD WORKSPACE REFERENCE
+  const addConfigsSpinner = ora('Add configs...\n').start()
   try {
     addConfigs('storybook')
     addConfigsSpinner.succeed()
@@ -74,7 +101,8 @@ export const createStorybook = async () => {
     return
   }
 
-  const installDepsSpinner = ora('Install dependencies...').start()
+  // INSTALL DEPENDENCIES
+  const installDepsSpinner = ora('Installing dependencies...\n').start()
   try {
     installDeps()
     installDepsSpinner.succeed()
@@ -82,4 +110,5 @@ export const createStorybook = async () => {
     cleanup('storybook', PROJECT_TYPE.APP)
     installDepsSpinner.fail()
   }
+  return wantTheme
 }

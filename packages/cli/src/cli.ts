@@ -1,8 +1,9 @@
 import readlineSync from 'readline-sync'
 
-import { chooseName, chooseOption } from './questions/index'
-import type { Option } from './types'
-import { createMatrix, DEFAULT_OPTION_INDEX, OPTIONS } from './utils'
+import { createMatrix } from './projects/index.js'
+import { chooseName, chooseOption } from './questions/index.js'
+import type { Option } from './types.js'
+import { allowChooseName, DEFAULT_OPTION_INDEX, OPTIONS } from './utils/index.js'
 
 let selectedOption: Option
 
@@ -18,7 +19,5 @@ const optionIndex = Number(option) - 1
 
 selectedOption = OPTIONS[optionIndex]
 
-const name = selectedOption[0] === 'Storybook' ? '' : chooseName()
-
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
+const name = allowChooseName(selectedOption[0]) ? chooseName() : ''
 createMatrix(selectedOption[0], name)

@@ -6,6 +6,8 @@
     "composite": true,
     "declaration": true,
     "removeComments": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "moduleResolution": "bundler",
+    "module": "preserve"
   }
 }

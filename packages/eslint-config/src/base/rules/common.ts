@@ -61,4 +61,5 @@ export const common: Linter.RulesRecord = {
   'no-use-before-define': 'off', // Guarded by @typescript-eslint/no-use-before-define
   'no-warning-comments': ['warn', { terms: ['fixme', 'todo'] }], // Warn against fixme and todo comments
   'object-curly-newline': ['error', { consistent: true }], // Enforce consistent line breaks inside braces
+  'prettier/prettier': ['error', { endOfLine: 'auto' }],
 }
