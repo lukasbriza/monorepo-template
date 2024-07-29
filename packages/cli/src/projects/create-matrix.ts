@@ -1,4 +1,5 @@
 import { createComponents } from './create-components.js'
+import { createNestJs } from './create-nestjs.js'
 import { createNextProject } from './create-next-project.js'
 import { createStorybook } from './create-storybook.js'
 import { createTheme } from './create-theme.js'
@@ -24,6 +25,10 @@ export const createMatrix = (option: string, projectName: string) => {
     }
     case 'Component library': {
       createComponents()
+      break
+    }
+    case 'NestJs': {
+      createNestJs(projectName)
       break
     }
   }

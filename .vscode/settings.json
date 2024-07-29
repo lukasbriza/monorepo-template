@@ -5,5 +5,7 @@
     }
   ],
   "prettier.configPath": ".",
-  "prettier.useEditorConfig": false
+  "prettier.useEditorConfig": false,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,  
 }

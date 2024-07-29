@@ -16,6 +16,7 @@ export const OPTIONS: Options = [
   ['NextJS', PROJECT_TYPE.APP],
   ['Storybook', PROJECT_TYPE.APP],
   ['Theme', PROJECT_TYPE.PROJECT],
+  ['NestJs', PROJECT_TYPE.APP],
   ['Component library', PROJECT_TYPE.PROJECT],
 ]
 

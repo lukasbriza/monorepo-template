@@ -8,7 +8,8 @@
     ".": "./base.json",
     "./app": "./app.json",
     "./nextjs": "./nextjs.json",
-    "./library": "./library.json"
+    "./library": "./library.json",
+    "./nestjs": "./nestjs.json"
   },
   "main": "base.json",
   "files": [
@@ -16,7 +17,8 @@
     "base.json",
     "library.json",
     "cjs-library.json",
-    "nextjs.json"
+    "nextjs.json",
+    "nestjs.json"
   ],
   "scripts": {
     "cleanup": "rimraf .eslintcache .turbo node_modules",

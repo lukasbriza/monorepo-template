@@ -12,6 +12,7 @@
     "dist",
     "index.js",
     "nextjs.js",
+    "nestjs.js",
     "react.js",
     "storybook.js"
   ],
