@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process'
-import { copyFileSync, existsSync, unlinkSync } from 'node:fs'
+import { copyFileSync, existsSync, rmSync, unlinkSync } from 'node:fs'
 
 import ora from 'ora'
 
@@ -58,6 +58,8 @@ export const createTheme = ({ connectTheme }: { connectTheme?: boolean }) => {
   try {
     unlinkSync(`${PACKAGES_PATH}/${projectName}/.eslintrc.cjs`)
     unlinkSync(`${PACKAGES_PATH}/${projectName}/tsconfig.json`)
+    unlinkSync(`${PACKAGES_PATH}/${projectName}/pnpm-lock.yaml`)
+    rmSync(`${PACKAGES_PATH}/${projectName}/.git`, { recursive: true, force: true })
     copyFileSync(eslintPath, `${PACKAGES_PATH}/${projectName}/.eslintrc.cjs`)
     copyFileSync(tsconfigPath, `${PACKAGES_PATH}/${projectName}/tsconfig.json`)
     copyFileSync(packagePath, `${PACKAGES_PATH}/${projectName}/package.json`)
@@ -85,7 +87,9 @@ export const createTheme = ({ connectTheme }: { connectTheme?: boolean }) => {
   // RUN LINTER
   const runLinterSpinner = ora('Running linter...\n').start()
   try {
-    execSync('pnpm run lint --fix', { cwd: `${PACKAGES_PATH}/${projectName}` })
+    execSync(`pnpm run lint:fix`, {
+      cwd: `${PACKAGES_PATH}/${projectName}`,
+    })
     runLinterSpinner.succeed()
   } catch {
     runLinterSpinner.fail()

@@ -38,6 +38,7 @@ export const postCreateNextProject = (nextProjectName: string) => {
   } catch {
     hasThemeSpinner.fail()
     cleanupSetup(nextProjectName, hasTheme)
+    return
   }
 
   // HAS STYLES PACKAGE
@@ -53,6 +54,7 @@ export const postCreateNextProject = (nextProjectName: string) => {
   } catch {
     hasStylesPackageSpinner.fail()
     cleanupSetup(nextProjectName, hasTheme, undefined, hasStyles)
+    return
   }
 
   // HAS COMPONENTS
@@ -68,6 +70,7 @@ export const postCreateNextProject = (nextProjectName: string) => {
   } catch {
     hasComponentsPackageSpinner.fail()
     cleanupSetup(nextProjectName, hasTheme, hasComponents, hasStyles)
+    return
   }
 
   // ADD LOCAL DEPENDENCIES TO NEXTJS PROJECT
@@ -85,6 +88,7 @@ export const postCreateNextProject = (nextProjectName: string) => {
   } catch {
     addLocalDependencies.fail()
     cleanupSetup(nextProjectName, hasTheme, hasComponents, hasStyles)
+    return
   }
 
   // INSTALL DEPENDENCIES
@@ -95,16 +99,20 @@ export const postCreateNextProject = (nextProjectName: string) => {
   } catch {
     installDependencies.fail()
     cleanupSetup(nextProjectName, hasTheme, hasComponents, hasStyles)
+    return
   }
 
-  // LINT FIX NEXTJS PRJECT
+  // LINT FIX NEXTJS PROJECT
   const lintFixNextProjectSpinner = ora('Linting created NextJs project...\n').start()
   try {
-    execSync('pnpm run lint --fix', { cwd: `${APPS_PATH}/${nextProjectName}` })
+    execSync(`pnpm turbo run lint:fix --filter @lukasbriza/${nextProjectName}`, {
+      cwd: `${APPS_PATH}/${nextProjectName}`,
+    })
     lintFixNextProjectSpinner.succeed()
-  } catch {
+  } catch (error) {
     lintFixNextProjectSpinner.fail()
     cleanupSetup(nextProjectName, hasTheme, hasComponents, hasStyles)
+    return
   }
 
   // BUILD ALL MONOREPO PROJECTS

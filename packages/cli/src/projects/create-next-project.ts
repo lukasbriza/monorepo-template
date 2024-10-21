@@ -1,4 +1,4 @@
-import { copyFileSync, unlinkSync } from 'node:fs'
+import { copyFileSync, rmSync, unlinkSync } from 'node:fs'
 
 import ora from 'ora'
 
@@ -33,6 +33,8 @@ export const createNextProject = (name: string) => {
   const copyFiles = ora('Copy configuration files...\n').start()
   try {
     unlinkSync(`${APPS_PATH}/${name}/tsconfig.json`)
+    unlinkSync(`${APPS_PATH}/${name}/pnpm-lock.yaml`)
+    rmSync(`${APPS_PATH}/${name}/.git`, { recursive: true, force: true })
     copyFileSync(tsConfigPath, `${APPS_PATH}/${name}/tsconfig.json`)
     copyFileSync(eslintPath, `${APPS_PATH}/${name}/.eslintrc.cjs`)
     copyFiles.succeed()
