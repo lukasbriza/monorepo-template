@@ -8,7 +8,7 @@
     "./*.cjs",
     "./*.js",
     "./*.ts",
-    "commitlint.config.cjs",
+    "commitlint.config.js",
     "lint-staged.config.js",
     "prettier.config.js"
   ]
