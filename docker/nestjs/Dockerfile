@@ -12,7 +12,9 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV CI=true
 ENV DOCKER=true
 
-RUN apk add --no-cache \
+RUN sed -i 's|https://dl-cdn.alpinelinux.org/alpine/|http://mirror.fel.cvut.cz/alpine/|' /etc/apk/repositories && \
+    apk update && \
+    apk add --no-cache \
     openssl \
     libc6-compat \
     musl \
@@ -21,10 +23,9 @@ RUN apk add --no-cache \
     libstdc++ \
     bash \
     curl \
-    jq && \
-    apk update && \
-    rm -rf /var/cache/apk/* && \
-    corepack enable
+    jq
+RUN corepack enable
+RUN rm -rf /var/cache/apk/*
 
 COPY package.json .
 RUN corepack prepare "$(jq -r '.packageManager' package.json)" --activate 
