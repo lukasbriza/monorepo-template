@@ -1,35 +1,4 @@
-ARG NODE_VERSION=22.9.0
-
-################################
-#Alpine image
-FROM node:${NODE_VERSION}-alpine3.20 AS alpine
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-ENV TURBO_TELEMETRY_DISABLED=1
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-ENV CI=true
-ENV DOCKER=true
-
-RUN sed -i 's|https://dl-cdn.alpinelinux.org/alpine/|http://mirror.fel.cvut.cz/alpine/|' /etc/apk/repositories && \
-    apk update && \
-    apk add --no-cache \
-    openssl \
-    libc6-compat \
-    musl \
-    musl-utils \
-    musl-locales \
-    libstdc++ \
-    bash \
-    curl \
-    jq
-RUN corepack enable
-RUN rm -rf /var/cache/apk/*
-
-COPY package.json .
-RUN corepack prepare "$(jq -r '.packageManager' package.json)" --activate 
-RUN rm package.json
+FROM lbriza/coincrusade-runner-game:base AS alpine
 
 ################################
 # Setup turbo on the alpine base
@@ -46,7 +15,6 @@ ARG APP
 
 WORKDIR /application
 COPY . .
-
 RUN turbo prune @lukasbriza/${APP} --docker
 
 ################################
@@ -56,6 +24,7 @@ ARG APP
 
 # Copy codestyle configuration files
 COPY --from=pruner /application/.npmrc /application/tsconfig.json /application/.eslintrc.cjs /application/.prettierignore /application/prettier.config.js /application/
+COPY --from=pruner /application/scripts /application/scripts/
 
 WORKDIR /application
 
