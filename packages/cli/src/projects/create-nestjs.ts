@@ -13,6 +13,7 @@ import {
   prettierignorePath,
   tsConfigBuildPath,
   tsConfigPath,
+  turboFilePath,
   vitestConfigPath,
 } from '../paths/nestjs-paths.js'
 import { PROJECT_TYPE } from '../types.js'
@@ -64,6 +65,7 @@ export const createNestJs = (projectName: string) => {
     copyFileSync(tsConfigBuildPath, `${APPS_PATH}/${projectName}/tsconfig.build.json`)
     copyFileSync(vitestConfigPath, `${APPS_PATH}/${projectName}/vitest.config.mjs`)
     copyFileSync(mainFileConfigPath, `${APPS_PATH}/${projectName}/src/main.ts`)
+    copyFileSync(turboFilePath, `${APPS_PATH}/${projectName}/turbo.json`)
 
     const file = readFileSync(`${APPS_PATH}/${projectName}/package.json`)
     const newValue = String(file).replace('@lukasbriza/nestjs', `@lukasbriza/${projectName}`)

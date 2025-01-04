@@ -2,7 +2,7 @@ import { copyFileSync, rmSync, unlinkSync } from 'node:fs'
 
 import ora from 'ora'
 
-import { eslintPath, tsConfigPath } from '../paths/nextjs-paths.js'
+import { eslintPath, tsConfigPath, turboFilePath } from '../paths/nextjs-paths.js'
 import { PROJECT_TYPE } from '../types.js'
 import { APPS_PATH, cleanup, createDirectory, downloadNextTemplate } from '../utils/index.js'
 
@@ -37,6 +37,7 @@ export const createNextProject = (name: string) => {
     rmSync(`${APPS_PATH}/${name}/.git`, { recursive: true, force: true })
     copyFileSync(tsConfigPath, `${APPS_PATH}/${name}/tsconfig.json`)
     copyFileSync(eslintPath, `${APPS_PATH}/${name}/.eslintrc.cjs`)
+    copyFileSync(turboFilePath, `${APPS_PATH}/${name}/turbo.json`)
     copyFiles.succeed()
   } catch {
     copyFiles.fail()
