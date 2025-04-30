@@ -59,7 +59,7 @@ export const createNestJs = (projectName: string) => {
     copyFileSync(eslintrcPath, `${APPS_PATH}/${projectName}/.eslintrc.cjs`)
     copyFileSync(gitignorePath, `${APPS_PATH}/${projectName}/.gitignore`)
     copyFileSync(prettierignorePath, `${APPS_PATH}/${projectName}/.prettierignore`)
-    copyFileSync(lintStagedPath, `${APPS_PATH}/${projectName}/lint-staged.config.js`)
+    copyFileSync(lintStagedPath, `${APPS_PATH}/${projectName}/lint-staged.config.mjs`)
     copyFileSync(packagePath, `${APPS_PATH}/${projectName}/package.json`)
     copyFileSync(tsConfigPath, `${APPS_PATH}/${projectName}/tsconfig.json`)
     copyFileSync(tsConfigBuildPath, `${APPS_PATH}/${projectName}/tsconfig.build.json`)
@@ -94,8 +94,10 @@ export const createNestJs = (projectName: string) => {
   try {
     execSync('pnpm run lint --fix', { cwd: `${APPS_PATH}/${projectName}` })
     lintSpinner.succeed()
-  } catch {
+  } catch (error) {
     lintSpinner.fail()
+    // eslint-disable-next-line no-console
+    console.log(error)
     cleanup(projectName, PROJECT_TYPE.APP)
   }
 }
