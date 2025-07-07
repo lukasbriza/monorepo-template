@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { cpSync } from 'node:fs'
+import { cpSync, rmSync } from 'node:fs'
 
 import chalk from 'chalk'
 import ora from 'ora'
@@ -35,34 +35,32 @@ const updateCli = async () => {
   downloadMonorepoTemplate()
   downloadSpinner.succeed('Monorepo downloaded...\n')
 
-  const copyOptions = { recursive: true, force: true }
+  const options = { recursive: true, force: true }
 
   const updateSpinner = ora().start('Updating CLI package folder...')
-  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/src`, `${PACKAGES_PATH}/cli/src`, copyOptions)
-  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/files`, `${PACKAGES_PATH}/cli/src/files`, copyOptions)
-  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/.eslintignore`, `${PACKAGES_PATH}/cli/.eslintignore`, copyOptions)
-  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/.eslintrc.cjs`, `${PACKAGES_PATH}/cli/.eslintrc.cjs`, copyOptions)
-  cpSync(
-    `${TEMP_PATH}/monorepo-template/packages/cli/.prettierignore`,
-    `${PACKAGES_PATH}/cli/.prettierignore`,
-    copyOptions,
-  )
-  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/package.json`, `${PACKAGES_PATH}/cli/package.json`, copyOptions)
-  cpSync(
-    `${TEMP_PATH}/monorepo-template/packages/cli/tsconfig.build.json`,
-    `${PACKAGES_PATH}/cli/tsconfig.build.json`,
-    copyOptions,
-  )
+  rmSync(`${PACKAGES_PATH}/cli/src`, options)
+  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/src`, `${PACKAGES_PATH}/cli/src`, options)
+  rmSync(`${PACKAGES_PATH}/cli/src/files`, options)
+  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/files`, `${PACKAGES_PATH}/cli/src/files`, options)
+  rmSync(`${PACKAGES_PATH}/cli/.eslintignore`, options)
+  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/.eslintignore`, `${PACKAGES_PATH}/cli/.eslintignore`, options)
+  rmSync(`${PACKAGES_PATH}/cli/.eslintrc.cjs`, options)
+  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/.eslintrc.cjs`, `${PACKAGES_PATH}/cli/.eslintrc.cjs`, options)
+  rmSync(`${PACKAGES_PATH}/cli/.prettierignore`, options)
+  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/.prettierignore`, `${PACKAGES_PATH}/cli/.prettierignore`, options)
+  rmSync(`${PACKAGES_PATH}/cli/package.json`)
+  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/package.json`, `${PACKAGES_PATH}/cli/package.json`, options)
+  rmSync(`${PACKAGES_PATH}/cli/tsconfig.build.json`)
   cpSync(
     `${TEMP_PATH}/monorepo-template/packages/cli/tsconfig.build.json`,
     `${PACKAGES_PATH}/cli/tsconfig.build.json`,
-    copyOptions,
+    options,
   )
-  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/tsconfig.json`, `${PACKAGES_PATH}/cli/tsconfig.json`, copyOptions)
+  rmSync(`${PACKAGES_PATH}/cli/tsconfig.json`)
+  cpSync(`${TEMP_PATH}/monorepo-template/packages/cli/tsconfig.json`, `${PACKAGES_PATH}/cli/tsconfig.json`, options)
   updateSpinner.succeed('CLI folder updated...\n')
 
   const cleanSpinner = ora().start('Cleaning temporary folder...\n')
-  cleanTemporaryFolder()
   cleanTemporaryFolder()
   cleanSpinner.succeed('Temporary folder cleaned...\n')
 
@@ -71,7 +69,7 @@ const updateCli = async () => {
   })
 
   console.clear()
-  console.log(chalk.red('It is recommended to freshly build CLI tool and re-run.'))
+  console.log(chalk.red('\n\nIt is recommended to freshly build CLI tool and re-run.\n\n'))
 }
 
 export const settings = async () => {
