@@ -11,11 +11,13 @@ import { cleanTemporaryFolder, downloadMonorepoTemplate } from '../utils/index.j
 const updateDockerFiles = async () => {
   console.clear()
   const downloadSpinner = ora().start('Downloading monorepo...')
+  const options = { recursive: true, force: true }
   cleanTemporaryFolder()
   downloadMonorepoTemplate()
 
   const updateSpinner = downloadSpinner.succeed('Monorepo downloaded...').start('Updating docker folder...')
-  cpSync(`${TEMP_PATH}/monorepo-template/docker`, DOCKER_PATH, { recursive: true, force: true })
+  rmSync(DOCKER_PATH, options)
+  cpSync(`${TEMP_PATH}/monorepo-template/docker`, DOCKER_PATH, options)
 
   const cleanSpinner = updateSpinner.succeed('Docker folder updated...').start('Cleaning temporary folder...')
   cleanTemporaryFolder()
