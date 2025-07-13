@@ -1,3 +1,8 @@
+# ARG TO BE DEFINED:
+# - TAG
+# - APP
+# - PORT
+
 # For all available tags look at https://hub.docker.com/repository/docker/lbriza/shared/tags
 ARG TAG=base-latest
 
@@ -82,6 +87,4 @@ COPY --from=builder --chown=nextjs:nextjs /application .
 
 WORKDIR /application/apps/${APP}
 EXPOSE ${PORT}
-CMD ["pnpm", "next", "start", "-p", "${PORT}"]
-
-
+CMD ["pnpm", "next", "start", "-p", "3000"]

@@ -1,3 +1,6 @@
+# ARG TO BE DEFINED:
+# - TAG
+
 # For all available tags look at https://hub.docker.com/repository/docker/lbriza/shared/tags
 ARG TAG=base-latest
 
