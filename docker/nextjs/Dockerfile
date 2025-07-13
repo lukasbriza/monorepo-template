@@ -1,8 +1,17 @@
-FROM lbriza/coincrusade-runner-game:base AS alpine
+# For all available tags look at https://hub.docker.com/repository/docker/lbriza/shared/tags
+ARG TAG=base-latest
+
+FROM lbriza/shared:${TAG} AS shared
 
 ################################
-# Setup turbo on the alpine base
-FROM alpine AS base
+# Corepack preparation
+COPY package.json .
+RUN corepack prepare "$(jq -r '.packageManager' package.json)" --activate 
+RUN rm package.json
+
+################################
+# Setup turbo on the shared image base
+FROM shared AS base
 RUN npm install turbo --global
 
 WORKDIR /application
@@ -55,7 +64,7 @@ RUN sh -c "rm -rf $(pnpm store path)"
 
 ################################
 # Final image
-FROM alpine AS runner
+FROM shared AS runner
 ARG APP
 ARG PORT=3000
 
@@ -73,6 +82,6 @@ COPY --from=builder --chown=nextjs:nextjs /application .
 
 WORKDIR /application/apps/${APP}
 EXPOSE ${PORT}
-CMD pnpm next start -p ${PORT}
+CMD ["pnpm", "next", "start", "-p", "${PORT}"]
 
 
