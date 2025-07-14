@@ -17,7 +17,7 @@ export const STORYBOOK_PATH = path.resolve(`${APPS_PATH}/storybook`)
 export const TEMP_PATH = path.normalize(`${ROOT}/.temp`)
 
 export const CROSSROAD_OPTIONS = ['Create project', 'Settings']
-export const SETTINGS_OPTIONS = ['Update CLI', 'Update docker files']
+export const SETTINGS_OPTIONS = ['Update CLI', 'Update docker files', 'Update `CONTRIBUTING.md`']
 
 export const OPTIONS: Options = [
   ['NextJS', PROJECT_TYPE.APP],
