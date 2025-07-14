@@ -5,8 +5,28 @@ import chalk from 'chalk'
 import ora from 'ora'
 import readlineSync from 'readline-sync'
 
-import { DOCKER_PATH, PACKAGES_PATH, SETTINGS_OPTIONS, TEMP_PATH } from '../constants.js'
+import { DOCKER_PATH, PACKAGES_PATH, ROOT, SETTINGS_OPTIONS, TEMP_PATH } from '../constants.js'
 import { cleanTemporaryFolder, downloadMonorepoTemplate } from '../utils/index.js'
+
+const UpdateContributingFile = async () => {
+  console.clear()
+  const downloadSpinner = ora().start('Downloading monorepo...')
+  const options = { recursive: true, force: true }
+  cleanTemporaryFolder()
+  downloadMonorepoTemplate()
+
+  const updateSpinner = downloadSpinner.succeed('Monorepo downloaded...').start('Updating CONTRIBUTING.md...')
+  cpSync(`${TEMP_PATH}/monorepo-template/CONTRIBUTING.md`, `${ROOT}/CONTRIBUTING.md`, options)
+  const cleanSpinner = updateSpinner.succeed('CONTRIBUTING.md updated...').start('Cleaning temporary folder...')
+  cleanTemporaryFolder()
+  cleanSpinner.succeed('Temporary folder cleaned...')
+
+  await new Promise((resolve) => {
+    setTimeout(resolve, 1000)
+  })
+
+  console.clear()
+}
 
 const updateDockerFiles = async () => {
   console.clear()
@@ -98,9 +118,17 @@ export const settings = async () => {
     }
   }
 
-  // DOcker files update.
+  // Docker files update.
   if (option === 1) {
     await updateDockerFiles()
+    return {
+      stop: false,
+      option,
+    }
+  }
+
+  if (option === 2) {
+    await UpdateContributingFile()
     return {
       stop: false,
       option,
