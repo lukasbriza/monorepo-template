@@ -11,16 +11,16 @@ FROM lbriza/shared:${TAG} AS shared
 ################################
 # Corepack preparation
 COPY package.json .
-RUN corepack prepare "$(jq -r '.packageManager' package.json)" --activate 
-RUN rm package.json
+RUN corepack prepare "$(jq -r '.packageManager' package.json)" --activate && \
+    rm package.json
 
 ################################
 # Setup turbo on the shared image base
 FROM shared AS base
-RUN npm install turbo --global
 
 WORKDIR /application
-RUN pnpm config set store-dir /application/.pnpm-store
+RUN npm install turbo --global && \
+    pnpm config set store-dir /application/.pnpm-store
 
 ################################
 # Prune project
@@ -49,8 +49,7 @@ COPY --from=pruner /application/out/json/ .
 
 # Download node prune
 RUN curl -sf https://gobinaries.com/tj/node-prune | sh
-
-# First install the dependencies (as they change less often)
+# Install the dependencies (as they change less often)
 RUN --mount=type=cache,id=pnpm,target=/application/.pnpm-store pnpm install --frozen-lockfile
 
 # Copy source code of isolated subworkspace
@@ -69,6 +68,7 @@ RUN turbo build --filter=@lukasbriza/${APP}
 # Copy libquery_engine-linux-musl-openssl-3.0.x.so.node in deployment folder
 RUN cp ./apps/${APP}/src/modules/prisma/generated/libquery_engine-linux-musl-openssl-3.0.x.so.node ./apps/${APP}/build/modules/prisma/generated
 
+# Prune and remove unecessary files
 RUN --mount=type=cache,id=pnpm,target=/application/.pnpm-store pnpm prune --prod --no-optional && \
     rm -rf ./.turbo && \
     rm -rf ./**/*/src && \
@@ -97,8 +97,7 @@ WORKDIR /application
 COPY --from=builder --chown=nodejs:nodejs /application .
 
 WORKDIR /application/apps/${APP}
-
 EXPOSE ${PORT}
 # Optionaly will need to tun prisma migrate command in compose "command" key,
 # to ensure, that DB is always actual.
-CMD ["pnpm", "start", "-p", "${PORT}"]
+CMD ["sh", "pnpm start -p ${PORT}"]

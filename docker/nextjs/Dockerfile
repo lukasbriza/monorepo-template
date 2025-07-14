@@ -57,15 +57,12 @@ RUN --mount=type=cache,id=pnpm,target=/application/.pnpm-store pnpm install --fr
 COPY --from=pruner /application/out/full/ .
 
 # Build and ceanup
-RUN turbo build --filter=@lukasbriza/${APP}
-RUN --mount=type=cache,id=pnpm,target=/application/.pnpm-store pnpm prune --prod --no-optional
-RUN rm -rf ./**/*/src && \
-    rm -rf ./**/*/test && \
-    rm -rf ./**/*/tests && \
-    rm -rf ./**/*/.turbo && \
-    rm -rf ./**/*/*.md
-RUN node-prune
-RUN sh -c "rm -rf $(pnpm store path)"
+RUN turbo build --filter=@lukasbriza/${APP} && \
+    pnpm prune --prod --no-optional && \
+    find . -type d \( -name "src" -o -name "test" -o -name "tests" -o -name ".turbo" \) -exec rm -rf {} + && \
+    find . -type f -name "*.md" -delete && \
+    node-prune && \
+    rm -rf $(pnpm store path)
 
 ################################
 # Final image
@@ -74,11 +71,10 @@ ARG APP
 ARG PORT=3000
 
 ENV PORT=${PORT}
-ENV HOSTNAME="0.0.0.0"
 ENV TZ=Europe/Prague
 ENV NODE_ENV=production
 
-RUN addgroup --system --gid 1001 nodejs && \
+RUN addgroup --system --gid 1001 nextjs && \
     adduser --system --uid 1001 nextjs
 USER nextjs
 
@@ -87,4 +83,4 @@ COPY --from=builder --chown=nextjs:nextjs /application .
 
 WORKDIR /application/apps/${APP}
 EXPOSE ${PORT}
-CMD ["pnpm", "next", "start", "-p", "3000"]
+CMD ["sh", "-c", "pnpm next start -p ${PORT}"]
