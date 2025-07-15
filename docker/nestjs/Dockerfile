@@ -57,16 +57,9 @@ COPY --from=pruner /application/out/full/ .
 
 WORKDIR /application/apps/${APP}
 
-# Remove generated prisma client if exists and generate new prisma code
-RUN rm -rf ./src/modules/prisma/generated && \
-    pnpm prisma:generate
-
 # Build and ceanup
 WORKDIR /application
 RUN turbo build --filter=@lukasbriza/${APP}
-
-# Copy libquery_engine-linux-musl-openssl-3.0.x.so.node in deployment folder
-RUN cp ./apps/${APP}/src/modules/prisma/generated/libquery_engine-linux-musl-openssl-3.0.x.so.node ./apps/${APP}/build/modules/prisma/generated
 
 # Prune and remove unecessary files
 RUN --mount=type=cache,id=pnpm,target=/application/.pnpm-store pnpm prune --prod --no-optional && \
@@ -97,6 +90,4 @@ WORKDIR /application
 COPY --from=builder --chown=nodejs:nodejs /application .
 
 WORKDIR /application/apps/${APP}
-# Optionaly will need to tun prisma migrate command in compose "command" key,
-# to ensure, that DB is always actual.
 CMD sh -c "pnpm start -p ${PORT}"

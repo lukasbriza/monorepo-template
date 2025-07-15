@@ -82,5 +82,4 @@ WORKDIR /application
 COPY --from=builder --chown=nextjs:nextjs /application . 
 
 WORKDIR /application/apps/${APP}
-EXPOSE ${PORT}
-CMD ["sh", "-c", "pnpm next start -p ${PORT}"]
+CMD sh -c "pnpm next start -p ${PORT}"
