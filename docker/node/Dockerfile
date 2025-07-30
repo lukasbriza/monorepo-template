@@ -5,6 +5,7 @@
 
 # For all available tags look at https://hub.docker.com/repository/docker/lbriza/shared/tags
 ARG TAG=base-latest
+ARG APP_FOLDER=apps
 
 FROM lbriza/shared:${TAG} AS shared
 
@@ -35,6 +36,7 @@ RUN turbo prune @lukasbriza/${APP} --docker
 # Build the project
 FROM base AS builder
 ARG APP
+ARG APP_FOLDER=apps
 
 # Copy codestyle configuration files
 COPY --from=pruner /application/.npmrc /application/tsconfig.json /application/.eslintrc.cjs /application/.prettierignore /application/prettier.config.js /application/
@@ -55,7 +57,7 @@ RUN --mount=type=cache,id=pnpm,target=/application/.pnpm-store pnpm install --fr
 # Copy source code of isolated subworkspace
 COPY --from=pruner /application/out/full/ .
 
-WORKDIR /application/apps/${APP}
+WORKDIR /application/${APP_FOLDER}/${APP}
 
 # Build and ceanup
 WORKDIR /application
@@ -77,6 +79,7 @@ RUN --mount=type=cache,id=pnpm,target=/application/.pnpm-store pnpm prune --prod
 FROM shared AS runner
 ARG APP
 ARG PORT=3001
+ARG APP_FOLDER=apps
 
 ENV PORT=${PORT}
 ENV HOSTNAME="0.0.0.0"
@@ -89,5 +92,5 @@ USER nodejs
 WORKDIR /application
 COPY --from=builder --chown=nodejs:nodejs /application .
 
-WORKDIR /application/apps/${APP}
+WORKDIR /application/${APP_FOLDER}/${APP}
 CMD sh -c "pnpm start -p ${PORT}"
