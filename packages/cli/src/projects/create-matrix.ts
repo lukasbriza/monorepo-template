@@ -1,3 +1,4 @@
+import readlineSync from 'readline-sync'
 import { createComponents } from './create-components.js'
 import { createNestJs } from './create-nestjs.js'
 import { createNextProject } from './create-next-project.js'
@@ -28,7 +29,8 @@ export const createMatrix = (option: string, projectName: string) => {
       break
     }
     case 'NestJs': {
-      createNestJs(projectName)
+      const withPrisma = readlineSync.keyInYN("With prisma?")
+      createNestJs(projectName, Boolean(withPrisma))
       break
     }
   }

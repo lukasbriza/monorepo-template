@@ -12,6 +12,8 @@ import {
   mainFileConfigPath,
   packagePath,
   prettierignorePath,
+  prismaPackagePath,
+  prismaSchemaPath,
   tsConfigBuildPath,
   tsConfigPath,
   turboFilePath,
@@ -20,7 +22,7 @@ import {
 import { PROJECT_TYPE } from '../types.js'
 import { createDirectory, cleanup, installDeps } from '../utils/index.js'
 
-export const createNestJs = (projectName: string) => {
+export const createNestJs = (projectName: string, withPrisma: boolean) => {
   // CREATE NEST JS PROJECT WITH CLI
   const createNestProjectSpinner = ora().start('Creating NestJs project...\n')
   try {
@@ -61,7 +63,7 @@ export const createNestJs = (projectName: string) => {
     copyFileSync(gitignorePath, `${APPS_PATH}/${projectName}/.gitignore`)
     copyFileSync(prettierignorePath, `${APPS_PATH}/${projectName}/.prettierignore`)
     copyFileSync(lintStagedPath, `${APPS_PATH}/${projectName}/lint-staged.config.mjs`)
-    copyFileSync(packagePath, `${APPS_PATH}/${projectName}/package.json`)
+    copyFileSync(withPrisma ? prismaPackagePath : packagePath, `${APPS_PATH}/${projectName}/package.json`)
     copyFileSync(tsConfigPath, `${APPS_PATH}/${projectName}/tsconfig.json`)
     copyFileSync(tsConfigBuildPath, `${APPS_PATH}/${projectName}/tsconfig.build.json`)
     copyFileSync(vitestConfigPath, `${APPS_PATH}/${projectName}/vitest.config.mjs`)
@@ -71,6 +73,11 @@ export const createNestJs = (projectName: string) => {
     const file = readFileSync(`${APPS_PATH}/${projectName}/package.json`)
     const newValue = String(file).replace('@lukasbriza/nestjs', `@lukasbriza/${projectName}`)
     writeFileSync(`${APPS_PATH}/${projectName}/package.json`, newValue)
+
+    if (withPrisma) {
+      createDirectory(`${APPS_PATH}/${projectName}/prisma`)
+      copyFileSync(prismaSchemaPath, `${APPS_PATH}/${projectName}/prisma/schema.prisma`)
+    }
 
     copyNewNestFilesSpinner.succeed()
   } catch {
