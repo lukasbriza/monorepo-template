@@ -7,14 +7,15 @@
   "type": "module",
   "workspaces": [
     "./apps/*",
-    "./packages/*"
+    "./packages/*",
+    "./templates/*"
   ],
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo build --filter='!./templates/*'",
     "cleanup": "turbo run cleanup --no-daemon && pnpm run postcleanup",
     "postcleanup": "rimraf .eslintcache tsconfig.tsbuildinfo node_modules",
     "cli": "turbo build --filter @lukasbriza/cli & node ./packages/cli/dist/cli.js",
-    "dev": "turbo dev",
+    "dev": "turbo dev --filter='!./templates/*'",
     "docker:run-tests": "docker compose -f docker/tests/docker-compose-run-tests.yaml up --build",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint --no-daemon",
@@ -32,6 +33,7 @@
     "@lukasbriza/prettier-config": "workspace:*",
     "@lukasbriza/ts-config": "workspace:*",
     "@nestjs/cli": "10.4.2",
+    "@turbo/gen": "2.0.6",
     "@types/node": "20.14.9",
     "cpy-cli": "5.0.0",
     "eslint": "8.57.0",
