@@ -14,5 +14,9 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   // Run on every route except Next internals and files with an extension (static assets).
-  matcher: [String.raw`/((?!api|_next/static|_next/image|favicon.ico|.*\..*).*)`],
+  // Must be a plain string literal — Next statically parses this and rejects String.raw.
+  matcher: [
+    // eslint-disable-next-line unicorn/prefer-string-raw
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',
+  ],
 }

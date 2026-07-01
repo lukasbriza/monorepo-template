@@ -1,5 +1,5 @@
-import type { AsyncWebLayout } from '@/shared/types'
 import { I18nProviderClient } from '@/i18n/client'
+import type { AsyncWebLayout } from '@/shared/types'
 
 import { EmotionRegistry } from './registry'
 

@@ -24,19 +24,26 @@ must change, change it in the shared package so every workspace inherits it.
 Scaffolding is generator-driven from canonical templates in `templates/`:
 
 ```
-pnpm turbo gen app-next      # new Next.js app  -> apps/<name>
+pnpm turbo gen app-next            # Next.js app             -> apps/<name>
+pnpm turbo gen app-nest            # NestJS app (+Prisma 7)  -> apps/<name>
+pnpm turbo gen app-storybook       # Storybook host (+theme) -> apps/storybook
+pnpm turbo gen package-theme       # shared MUI theme        -> packages/theme
+pnpm turbo gen package-styles      # styled helpers          -> packages/styles   (needs theme)
+pnpm turbo gen package-components  # component library       -> packages/components (needs theme + styles)
 ```
 
 - `templates/<type>/` holds the **canonical, real** project body (single source of
-  truth). Generators copy it into `apps/`/`packages/` and post-process (rename package,
-  wire deps, drop per-app `CLAUDE.md`).
+  truth). Generators copy it into `apps/`/`packages/` and post-process (rename, optional
+  variants, drop per-workspace `CLAUDE.md`), then optionally run `pnpm install` + `lint:fix`.
 - Generators are defined in `turbo/generators/config.ts`.
 - `templates/*` **are** workspaces (installed for full type-awareness, linting and
-  type-checking), but excluded from `pnpm dev` / `pnpm build` via `--filter='!./templates/*'`
-  so they never run or build as phantom apps.
+  type-checking), but `pnpm dev` / `pnpm build` scope to `--filter="./apps/*" --filter="./packages/*"`
+  so templates never run or build as phantom apps. (Positive filters, not a lone
+  `!./templates/*` which selects nothing; escaped double quotes so it works on Windows `cmd`.)
+- Dependency order: `package-theme` → `package-styles` → `package-components`; generators
+  guard against missing prerequisites.
 
-> Migration note: the legacy `packages/cli` scaffolder is being retired in favor of
-> `turbo gen`. Prefer generators; don't extend the CLI.
+Scaffolding is fully generator-based (the legacy `packages/cli` has been removed).
 
 ## Common tasks
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
-import type { WebPage } from '@/shared/types'
 import { getScopedI18n } from '@/i18n/server'
+import type { WebPage } from '@/shared/types'
 
 // Disable caching for this route segment.
 export const dynamic = 'force-dynamic'

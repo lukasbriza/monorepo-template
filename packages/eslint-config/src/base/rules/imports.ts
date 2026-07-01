@@ -1,5 +1,6 @@
 import type { Linter } from 'eslint'
 
+import { extraneousDependenciesPatterns } from '../../constants'
 import { getImportExtensionsRule } from '../../utils'
 
 export const imports: Linter.RulesRecord = {
@@ -16,6 +17,9 @@ export const imports: Linter.RulesRecord = {
       'newlines-between': 'always',
     },
   ],
+  // Production code must not import devDependencies; config files, scripts, tests and
+  // type declarations may (see extraneousDependenciesPatterns).
+  'import/no-extraneous-dependencies': ['error', { devDependencies: [...extraneousDependenciesPatterns] }],
   'import/prefer-default-export': 'off', // Prefer named exports
   'unused-imports/no-unused-imports': 'error', // Disallow unused imports
   'unused-imports/no-unused-vars': ['error', { ignoreRestSiblings: true }], // Disallow unused variables
