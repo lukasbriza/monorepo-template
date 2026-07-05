@@ -60,6 +60,29 @@ pnpm format     # prettier write
 
 - Reusable AI capabilities live in `.claude/` (skills, agents, commands, hooks) and are
   distributed **in-repo**: committed here and inherited by scaffolded projects.
+- Subagents (`.claude/agents/`): `reviewer` — read-only code review of a diff, tuned to this
+  stack ("review my changes"); `test-writer` — writes vitest specs (Nest services/controllers
+  with `@nestjs/testing`, `@testing-library/react` components), test-files only.
+- Commands (`.claude/commands/`): `/scaffold <type> [name]` wraps `turbo gen` (validates type,
+  prerequisites, runs non-interactively); `/review [target]` dispatches the `reviewer` subagent.
+- `coding-conventions` (`.claude/skills/coding-conventions`) captures cross-cutting TypeScript
+  conventions (SKILL.md, always-lean) plus per-framework detail loaded on demand
+  (`references/{react,nextjs,nestjs}.md`). It fires when writing/reviewing code and complements —
+  doesn't duplicate — `@lukasbriza/eslint-config` (mechanical, enforced) and the per-workspace `CLAUDE.md`.
+- `web-performance` (`.claude/skills/web-performance`) — curated React/Next/RSC/bundle/JS
+  performance rules (index + `rules/<name>.md`), the performance axis on top of the conventions.
+- `commit-and-pr` (`.claude/skills/commit-and-pr`) — Conventional-Commits messages that pass the
+  commitlint `commit-msg` hook, plus a consistent PR shape. Commits/PRs carry **no AI attribution**
+  (`settings.json` sets `includeCoAuthoredBy: false`).
+- `plan-project` (`.claude/skills/plan-project`) — main-thread planner: clarifies a thin brief with
+  the requester, produces a scoped plan + roadmap, decomposes into tasks, and writes them as GitHub
+  issues on the repo's Project (reuse the linked Project or create one). GitHub is the source of
+  truth; `references/github.md` holds the `gh` playbook.
+- Hooks (`.claude/settings.json`, committed): a `PreToolUse` guard
+  (`.claude/hooks/guard-generated.mjs`) blocks `Write`/`Edit` into generated/build output
+  (`dist/`, `build/`, `.next/`, `.turbo/`, `coverage/`, `*.tsbuildinfo`, prisma `generated/`,
+  openapi `api.d.ts`). Formatting/linting stays at commit time (husky + lint-staged) — no
+  auto-format hook, which would desync in-progress `Edit` matches.
 - Updates flow into existing projects via the `sync-template` skill: the template is a
   git remote (`template`), the last synced ref is recorded in `.claude/.template-ref`,
   and only the template's delta on owned paths is applied via 3-way merge (never a blind
