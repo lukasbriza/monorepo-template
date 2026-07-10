@@ -32,6 +32,7 @@ const blocked = [
   { re: /(^|\/)\.next\//, why: '.next/ (Next build output)' },
   { re: /(^|\/)\.turbo\//, why: '.turbo/ (turbo cache)' },
   { re: /(^|\/)coverage\//, why: 'coverage/ (test output)' },
+  { re: /(^|\/)graphify-out\//, why: 'graphify-out/ (generated knowledge graph — rebuild with /graphify)' },
   { re: /\.tsbuildinfo$/, why: 'TypeScript build info' },
   { re: /\/prisma\/generated\//, why: 'Prisma generated client (run `pnpm prisma:generate`)' },
   { re: /\/lib\/openapi-fetch\/api\.d\.ts$/, why: 'generated API types (run `pnpm api-schema:generate`)' },

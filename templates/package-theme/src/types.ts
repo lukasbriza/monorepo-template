@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-interface -- MUI module augmentation */
 /* eslint-disable @typescript-eslint/consistent-type-definitions -- MUI augmentation needs interfaces */
 import type { CSSProperties } from 'react'
 
@@ -79,12 +78,6 @@ declare module '@mui/material/Typography' {
     overline: false
     subtitle1: false
     subtitle2: false
-  }
-}
-
-declare module '@mui/material/styles/createTypography' {
-  interface FontStyleOptions {
-    fontWeightLight?: false
   }
 }
 

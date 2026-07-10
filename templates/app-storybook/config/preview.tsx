@@ -1,7 +1,7 @@
-import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from '@storybook/addon-viewport'
-import type { Decorator, Preview, ReactRenderer } from '@storybook/react'
-import type { PartialStoryFn, StoryContext } from '@storybook/types'
+import type { Decorator, Preview, ReactRenderer } from '@storybook/react-vite'
 import type { FunctionComponent } from 'react'
+import type { PartialStoryFn, StoryContext } from 'storybook/internal/types'
+import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport'
 
 const RootStory: FunctionComponent<{ context: StoryContext; story: PartialStoryFn<ReactRenderer> }> = ({
   context,
@@ -14,7 +14,7 @@ const preview: Preview = {
   decorators: [RootDecorator],
   parameters: {
     viewport: {
-      viewports: {
+      options: {
         ...INITIAL_VIEWPORTS,
         ...MINIMAL_VIEWPORTS,
       },

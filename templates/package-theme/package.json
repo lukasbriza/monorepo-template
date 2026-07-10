@@ -26,7 +26,7 @@
     "fix": "run-p ts format:fix lint:fix",
     "format": "prettier --check \"./**/*.{json,md,mdx}\"",
     "format:fix": "pnpm run format --write",
-    "lint": "eslint --cache --ext cjs,js,ts,tsx .",
+    "lint": "eslint --cache .",
     "lint:fix": "pnpm run lint --fix",
     "qa": "run-p ts format lint",
     "ts": "tsc --build tsconfig.json"
@@ -34,22 +34,22 @@
   "dependencies": {
     "@lukasbriza/eslint-config": "workspace:*",
     "@lukasbriza/ts-config": "workspace:*",
-    "@mui/material": "5.15.20",
-    "@mui/system": "5.15.20",
-    "@mui/types": "7.2.15",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@mui/material": "9.2.0",
+    "@mui/system": "9.2.0",
+    "@mui/types": "9.1.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
     "@babel/core": "7.24.7",
     "@babel/preset-env": "7.24.7",
     "@babel/preset-react": "7.24.7",
     "@babel/preset-typescript": "7.24.7",
-    "@storybook/blocks": "8.2.6",
-    "@types/node": "20.14.9",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-    "storybook": "8.2.6",
-    "typescript": "5.5.3"
+    "@storybook/addon-docs": "10.4.6",
+    "@types/node": "22.20.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "storybook": "10.4.6",
+    "typescript": "5.9.3"
   }
 }

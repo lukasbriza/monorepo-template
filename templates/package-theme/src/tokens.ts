@@ -1,8 +1,6 @@
-import type { PaletteOptions } from '@mui/material/styles/index'
-import type { Shape, SpacingOptions } from '@mui/system'
+import type { PaletteOptions, Shape } from '@mui/material/styles'
+import type { SpacingOptions } from '@mui/system'
 import { createBreakpoints } from '@mui/system'
-
-import type { WebSize } from './types'
 
 // --- colors ---
 export const gray = '#27292c'
@@ -83,6 +81,4 @@ export const shape: Shape = {
 export const spacing: SpacingOptions = 5
 export const sizeStep = 5
 
-export const size = Object.fromEntries(
-  Array.from({ length: 33 }, (_, index) => [`size${index}`, index * sizeStep]),
-) as WebSize
+export const size = Object.fromEntries(Array.from({ length: 33 }, (_, index) => [`size${index}`, index * sizeStep]))

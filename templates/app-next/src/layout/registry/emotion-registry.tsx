@@ -40,12 +40,14 @@ export const EmotionRegistry: FC<PropsWithChildren> = ({ children }) => {
 
     let styles = ''
     for (const name of names) {
-      styles += cache.inserted[name]
+      const inserted = cache.inserted[name]
+      if (typeof inserted === 'string') {
+        styles += inserted
+      }
     }
 
     return (
       <style
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: styles }}
         key={cache.key}
         data-emotion={`${cache.key} ${names.join(' ')}`}

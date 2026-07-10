@@ -7,7 +7,6 @@
   },
   "exclude": [".next", "node_modules", "public"],
   "include": [
-    ".eslintrc.cjs",
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "next.config.mjs",

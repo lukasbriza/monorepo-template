@@ -1,7 +1,6 @@
 import { Typography } from '@mui/material'
 import { Stack } from '@mui/system'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Typeset } from '@storybook/blocks'
+import { Typeset } from '@storybook/addon-docs/blocks'
 
 import { brandColors } from '../src/tokens'
 import { fontFamily, fontWeightBold, fontWeightRegular, headingsFontFamily } from '../src/typography'
@@ -21,8 +20,8 @@ const textColor = brandColors.bodyText.primary
 
 export const Headings = () =>
   headings.map((variant) => (
-    <Stack key={variant.variant} color={textColor} mb={2}>
-      <Typography color="bodyText.contrast" fontWeight="600" variant="S">
+    <Stack key={variant.variant} sx={{ color: textColor, mb: 2 }}>
+      <Typography color="bodyText.contrast" sx={{ fontWeight: '600' }} variant="S">
         {variant.variant}
       </Typography>
       <Typeset
@@ -36,8 +35,8 @@ export const Headings = () =>
 
 export const BodyText = () =>
   texts.map((variant) => (
-    <Stack key={variant.variant} color={textColor} mb={2}>
-      <Typography color="bodyText.contrast" fontWeight="fontWeightBold" variant="S">
+    <Stack key={variant.variant} sx={{ color: textColor, mb: 2 }}>
+      <Typography color="bodyText.contrast" sx={{ fontWeight: 'fontWeightBold' }} variant="S">
         {variant.variant}
       </Typography>
       <Typeset

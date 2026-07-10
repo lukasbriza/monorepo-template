@@ -52,7 +52,15 @@ const HomePage = async () => {
 - Read design tokens from the theme (`useTheme`, `theme.palette/…`); never hard-code colours/sizes.
 - Typography uses custom variants `S/M/L/XL` + `h1..h5`; built-in `body1`/`button`/etc. are disabled
   by the theme — don't use them.
-- Client components using emotion render under the SSR registry (`src/layout/registry`).
+- Emotion needs an SSR registry so styles ship with the first paint (no flash):
+  - **Next (app-next):** `EmotionRegistry` (`src/layout/registry`) using `useServerInsertedHTML`.
+  - **React Router (app-react):** ejected `entry.server.tsx` extracts critical CSS via
+    `@emotion/server` (`renderToString`) — trades RR streaming SSR for flash-free styles; the
+    `CacheProvider` lives in `entry.{server,client}.tsx`.
+- **One component per folder** (apps too, not just `@lukasbriza/components`): `<name>/` holds
+  `<name>.tsx`, `<name>.styles.ts` (the component's `styled` defs — never inline in JSX), `index.ts`.
+- **Scope split:** global styles (reset/tokens) → `app/styles/` (Emotion `<Global>` in app-react);
+  component styles → local `<name>.styles.ts`. The Emotion cache factory is infra → `app/lib/emotion/`.
 
 ## Context pattern (three-file split)
 

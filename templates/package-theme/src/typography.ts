@@ -1,5 +1,4 @@
-import type { TypographyOptions, TypographyStyle } from '@mui/material/styles/createTypography'
-import type { TypographyVariantsOptions } from '@mui/material/styles/index'
+import type { TypographyStyle, TypographyVariantsOptions } from '@mui/material/styles'
 
 import { breakpoints } from './tokens'
 
@@ -16,8 +15,8 @@ export const variants: TypographyVariantsOptions = {
   h1: {
     fontFamily: headingsFontFamily,
     fontSize: 48,
-    lineHeight: 1.333_33,
-    [breakpoints.down('md')]: { fontSize: 24, lineHeight: 1.333_33 },
+    lineHeight: 1.33333,
+    [breakpoints.down('md')]: { fontSize: 24, lineHeight: 1.33333 },
   },
   h2: {
     fontFamily: headingsFontFamily,
@@ -28,15 +27,15 @@ export const variants: TypographyVariantsOptions = {
   h3: {
     fontFamily: headingsFontFamily,
     fontSize: 24,
-    lineHeight: 1.333_33,
+    lineHeight: 1.33333,
     [breakpoints.down('md')]: { fontSize: 16, lineHeight: 1.5 },
   },
   h4: { fontFamily: headingsFontFamily, fontSize: 20, lineHeight: 1.4 },
   h5: { fontFamily: headingsFontFamily, fontSize: 16, lineHeight: 1.5 },
-  S: { fontSize: 12, lineHeight: 1.333_33 },
-  M: { fontSize: 14, lineHeight: 1.428_57 },
+  S: { fontSize: 12, lineHeight: 1.33333 },
+  M: { fontSize: 14, lineHeight: 1.42857 },
   L: { fontSize: 16, lineHeight: 1.5 },
-  XL: { fontSize: 18, lineHeight: 1.777_78 },
+  XL: { fontSize: 18, lineHeight: 1.77778 },
   // Disable unwanted built-in variants
   h6: undefined as unknown as TypographyStyle,
   body1: undefined as unknown as TypographyStyle,
@@ -48,12 +47,11 @@ export const variants: TypographyVariantsOptions = {
   subtitle2: undefined as unknown as TypographyStyle,
 }
 
-export const typography: TypographyOptions = {
+export const typography: TypographyVariantsOptions = {
   fontFamily,
   htmlFontSize,
   fontWeightRegular,
   fontWeightMedium,
   fontWeightBold,
-  fontWeightLight: false,
   ...variants,
 }

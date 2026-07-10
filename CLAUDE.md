@@ -25,6 +25,7 @@ Scaffolding is generator-driven from canonical templates in `templates/`:
 
 ```
 pnpm turbo gen app-next            # Next.js app             -> apps/<name>
+pnpm turbo gen app-react           # React Router (SSR) app  -> apps/<name>
 pnpm turbo gen app-nest            # NestJS app (+Prisma 7)  -> apps/<name>
 pnpm turbo gen app-storybook       # Storybook host (+theme) -> apps/storybook
 pnpm turbo gen package-theme       # shared MUI theme        -> packages/theme
@@ -83,6 +84,13 @@ pnpm format     # prettier write
   (`dist/`, `build/`, `.next/`, `.turbo/`, `coverage/`, `*.tsbuildinfo`, prisma `generated/`,
   openapi `api.d.ts`). Formatting/linting stays at commit time (husky + lint-staged) — no
   auto-format hook, which would desync in-progress `Edit` matches.
+- Knowledge graph: `/graphify` (external Claude Code skill + `graphifyy` CLI, installed
+  per-machine — `pip install graphifyy && graphify install`) builds a graph of the repo into
+  `graphify-out/` (gitignored). When navigating a large codebase, prefer querying the graph
+  (`/graphify query …`) or reading `graphify-out/wiki/` over bulk-reading files — that's where the
+  token saving comes from (negligible on a small/fresh repo; it scales with corpus size). A
+  `.husky/post-commit` hook runs `graphify . --update` to keep the graph current (no-op if
+  graphify isn't installed; backgrounded so commits stay fast).
 - Updates flow into existing projects via the `sync-template` skill: the template is a
   git remote (`template`), the last synced ref is recorded in `.claude/.template-ref`,
   and only the template's delta on owned paths is applied via 3-way merge (never a blind

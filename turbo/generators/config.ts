@@ -166,7 +166,7 @@ export default preview
 
 const STORYBOOK_THEME_TSCONFIG = `{
   "extends": "@lukasbriza/ts-config/app",
-  "include": [".eslintrc.cjs", "**/*.js", "**/*.ts", "**/*.tsx"],
+  "include": ["**/*.js", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "storybook-static"],
   "references": [{ "path": "../../packages/theme/tsconfig.build.json" }]
 }
@@ -300,6 +300,23 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         const { name, install } = answers as { name: string; install: boolean }
         const message = finalize(`@lukasbriza/${name}`, install)
         return `${message}\nRemember: cp apps/${name}/.env.example apps/${name}/.env.local`
+      },
+    ],
+  })
+
+  plop.setGenerator('app-react', {
+    description: 'Scaffold a React Router (framework, SSR) app from templates/app-react into apps/<name>',
+    prompts: [kebabPrompt, installPrompt],
+    actions: [
+      (answers) => {
+        const { name } = answers as { name: string }
+        const destination = copyTemplate('app-react', path.join('apps', name))
+        renamePackage(destination, '@lukasbriza/react-template', `@lukasbriza/${name}`)
+        return `Created apps/${name} from templates/app-react`
+      },
+      (answers) => {
+        const { name, install } = answers as { name: string; install: boolean }
+        return finalize(`@lukasbriza/${name}`, install)
       },
     ],
   })

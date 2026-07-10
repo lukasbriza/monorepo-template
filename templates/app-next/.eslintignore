@@ -1,5 +1,0 @@
-/**/*.generated.*
-/.next
-/public
-next.config.mjs
-src/lib/openapi-fetch/api.d.ts

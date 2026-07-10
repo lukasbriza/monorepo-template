@@ -4,5 +4,5 @@
     "checkJs": true
   },
   "include": ["./*.ts", "./*.js", "turbo/**/*.ts"],
-  "exclude": ["node_modules", ".eslintrc.cjs", "scripts"]
+  "exclude": ["node_modules", "eslint.config.mjs", "scripts"]
 }

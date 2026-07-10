@@ -73,3 +73,34 @@ export const HomePage: WebPage = async () => {
 | `process.env` in a client component | `env()` from `next-runtime-env` |
 | Editing generated `api.d.ts` | `pnpm api-schema:generate` |
 | Computed `middleware` matcher | plain string literal |
+
+## State & data — pick the right tool
+
+Don't default to a global store. Match the kind of state to its tool:
+
+| State | Use |
+|---|---|
+| Server data | Fetch in Server Components; for client fetching use TanStack Query via `openapi-react-query` (`$api` in `src/lib/openapi-fetch`) |
+| URL state (filters, tabs, pagination) | `searchParams` — shareable, no store |
+| Form state | `react-hook-form` (+ `yup`) |
+| Local UI state | `useState` / `useReducer` |
+| Shared client UI state (drawers, modals, wizards) | Zustand via the SSR-safe provider pattern (`src/stores`) |
+
+### TanStack Query + RSC hydration
+
+Prefetch on the server, hydrate into the client cache — no loading flash, client keeps caching/refetch/mutations:
+
+- `getQueryClient()` (`src/lib/query/query-client.ts`) returns a **fresh client per request on the server**, a **singleton in the browser** — never a module-level singleton (leaks between users).
+- Server Component: `await queryClient.prefetchQuery($api.queryOptions('get', '/path', init))`, then wrap the client subtree in `<HydrationBoundary state={dehydrate(queryClient)}>`.
+- Client component: `$api.useQuery('get', '/path', init)` — same key, reads from the hydrated cache.
+- `QueryProvider` wraps the app once (in `web-layout`).
+
+### Zustand — SSR-safe
+
+Never `const store = createStore(...)` at module scope — on the server it's shared across requests and leaks state between users. Instead:
+
+- A **factory** `createXxxStore()` (`createStore` from `zustand`).
+- A Client Component **provider** that creates the store once via lazy `useState(createXxxStore)` (reading a `useRef` during render trips React 19's rules-of-refs).
+- A **selector hook** `useXxxStore(selector)` via `useStore` — subscribe to slices, never the whole store.
+
+Reference: `src/stores/ui-store.ts` + `ui-store-provider.tsx`.

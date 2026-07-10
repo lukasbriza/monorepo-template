@@ -5,7 +5,7 @@ covers only what is specific to a NestJS app.
 
 ## Stack
 
-- NestJS 10 (Express platform), TypeScript (CommonJS output via `nest build` → `build/`).
+- NestJS 11 (Express 5 platform), TypeScript (CommonJS output via `nest build` → `build/`).
 - Swagger at `/api/swagger` (`@nestjs/swagger`), config via `@nestjs/config` + dotenv.
 - Validation: `class-validator`. Tests: **vitest** (`vitest.config.mjs`).
 

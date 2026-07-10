@@ -8,6 +8,7 @@
     ".": "./base.json",
     "./app": "./app.json",
     "./nextjs": "./nextjs.json",
+    "./react": "./react.json",
     "./library": "./library.json",
     "./nestjs": "./nestjs.json"
   },
@@ -18,7 +19,8 @@
     "library.json",
     "cjs-library.json",
     "nextjs.json",
-    "nestjs.json"
+    "nestjs.json",
+    "react.json"
   ],
   "scripts": {
     "cleanup": "rimraf .eslintcache .turbo node_modules",
@@ -28,9 +30,9 @@
   },
   "devDependencies": {
     "@lukasbriza/eslint-config": "workspace:*",
-    "typescript": "5.5.3"
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
-    "typescript": "^5.5.3"
+    "typescript": ">=5.5.3"
   }
 }

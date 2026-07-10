@@ -4,7 +4,7 @@ Shared MUI theme. Inherits monorepo conventions from the root `CLAUDE.md`.
 
 ## Stack
 
-- MUI v5 (`@mui/material`, `@mui/system`, `@mui/types`), React 18.
+- MUI v9 (`@mui/material`, `@mui/system`, `@mui/types`), React 18.
 - Built as a library (`tsc --build tsconfig.build.json` → `dist/`), consumed by apps via `workspace:*`.
 
 ## Layout (src)

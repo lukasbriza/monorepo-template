@@ -2,7 +2,7 @@
 
 import type { Components, ThemeOptions } from '@mui/material'
 import { createTheme, CssBaseline, ThemeProvider as MuiThemeProvider } from '@mui/material'
-import type { ThemeProviderProps } from '@mui/material/styles/ThemeProvider'
+import type { ThemeProviderProps } from '@mui/material/styles'
 
 import { breakpoints, palette, shape, size, spacing } from './tokens'
 import type { WebTheme } from './types'
