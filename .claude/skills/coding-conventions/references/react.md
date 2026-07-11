@@ -57,6 +57,8 @@ const HomePage = async () => {
   - **React Router (app-react):** ejected `entry.server.tsx` extracts critical CSS via
     `@emotion/server` (`renderToString`) — trades RR streaming SSR for flash-free styles; the
     `CacheProvider` lives in `entry.{server,client}.tsx`.
+  - **React Native (app-mobile):** `@emotion/native` `styled.View`/`styled.Text` — no registry
+    and no SSR (renders on-device); RN style semantics (unitless numbers), not CSS.
 - **One component per folder** (apps too, not just `@lukasbriza/components`): `<name>/` holds
   `<name>.tsx`, `<name>.styles.ts` (the component's `styled` defs — never inline in JSX), `index.ts`.
 - **Scope split:** global styles (reset/tokens) → `app/styles/` (Emotion `<Global>` in app-react);

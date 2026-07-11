@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
 import { Breeds } from '@/components/breeds'
-import { $api } from '@/lib/openapi-fetch'
+import { $api } from '@/lib/api'
 import { getQueryClient } from '@/lib/query/query-client'
 
 import type { Route } from './+types/home'

@@ -26,12 +26,20 @@ Scaffolding is generator-driven from canonical templates in `templates/`:
 ```
 pnpm turbo gen app-next            # Next.js app             -> apps/<name>
 pnpm turbo gen app-react           # React Router (SSR) app  -> apps/<name>
+pnpm turbo gen app-mobile          # Expo (Expo Router) app  -> apps/<name>
 pnpm turbo gen app-nest            # NestJS app (+Prisma 7)  -> apps/<name>
 pnpm turbo gen app-storybook       # Storybook host (+theme) -> apps/storybook
-pnpm turbo gen package-theme       # shared MUI theme        -> packages/theme
+pnpm turbo gen package-tokens      # framework-free tokens   -> packages/tokens
+pnpm turbo gen package-api         # shared $api (openapi)   -> packages/api
+pnpm turbo gen package-theme       # shared MUI theme        -> packages/theme    (needs tokens)
 pnpm turbo gen package-styles      # styled helpers          -> packages/styles   (needs theme)
 pnpm turbo gen package-components  # component library       -> packages/components (needs theme + styles)
 ```
+
+Shared logic packages (`tokens`, `api`) are the DRY home for cross-app code: design tokens
+(consumed by the web theme and the mobile theme) and the typed `$api` (consumed by every app via
+a small per-app `lib/api.ts` that supplies the env baseUrl). Apps that use them depend on
+`@lukasbriza/api` / `@lukasbriza/tokens` (`workspace:*`), so scaffold those packages first.
 
 - `templates/<type>/` holds the **canonical, real** project body (single source of
   truth). Generators copy it into `apps/`/`packages/` and post-process (rename, optional
@@ -41,8 +49,9 @@ pnpm turbo gen package-components  # component library       -> packages/compone
   type-checking), but `pnpm dev` / `pnpm build` scope to `--filter="./apps/*" --filter="./packages/*"`
   so templates never run or build as phantom apps. (Positive filters, not a lone
   `!./templates/*` which selects nothing; escaped double quotes so it works on Windows `cmd`.)
-- Dependency order: `package-theme` → `package-styles` → `package-components`; generators
-  guard against missing prerequisites.
+- Dependency order: `package-tokens` → `package-theme` → `package-styles` → `package-components`;
+  generators guard against missing prerequisites. `package-api` has no prerequisites but is consumed
+  by apps, so scaffold it before its consumers.
 
 Scaffolding is fully generator-based (the legacy `packages/cli` has been removed).
 
@@ -68,10 +77,14 @@ pnpm format     # prettier write
   prerequisites, runs non-interactively); `/review [target]` dispatches the `reviewer` subagent.
 - `coding-conventions` (`.claude/skills/coding-conventions`) captures cross-cutting TypeScript
   conventions (SKILL.md, always-lean) plus per-framework detail loaded on demand
-  (`references/{react,nextjs,nestjs}.md`). It fires when writing/reviewing code and complements —
-  doesn't duplicate — `@lukasbriza/eslint-config` (mechanical, enforced) and the per-workspace `CLAUDE.md`.
+  (`references/{react,react-native,nextjs,nestjs}.md`). It fires when writing/reviewing code and
+  complements — doesn't duplicate — `@lukasbriza/eslint-config` (mechanical, enforced) and the
+  per-workspace `CLAUDE.md`.
 - `web-performance` (`.claude/skills/web-performance`) — curated React/Next/RSC/bundle/JS
   performance rules (index + `rules/<name>.md`), the performance axis on top of the conventions.
+- `native-performance` (`.claude/skills/native-performance`) — the same axis for Expo/React Native
+  (list virtualization, Reanimated UI-thread animations, `expo-image`); kept separate from
+  `web-performance` so each stays runtime-focused.
 - `commit-and-pr` (`.claude/skills/commit-and-pr`) — Conventional-Commits messages that pass the
   commitlint `commit-msg` hook, plus a consistent PR shape. Commits/PRs carry **no AI attribution**
   (`settings.json` sets `includeCoAuthoredBy: false`).

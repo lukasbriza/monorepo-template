@@ -8,7 +8,7 @@ covers only what is specific to a React Router app.
 - **React Router v8 framework mode** (SSR), React 19, Vite, TypeScript.
 - Data/state: **TanStack Query** with loader prefetch + hydration (`app/lib/query`);
   **Zustand** (SSR-safe provider, `app/stores`) for shared client UI state.
-- API: `openapi-fetch` + `openapi-react-query` typed hooks (`$api`, `app/lib/openapi-fetch`).
+- API: shared **`@lukasbriza/api`** (`$api`), bound to the baseUrl once in `app/lib/api.ts`.
 - Styling: **Emotion `styled`** (CSS-in-JS) with SSR critical-CSS extraction — same model as
   the Next app. Optional monorepo theme (`@lukasbriza/theme` / `@lukasbriza/styles`).
 
@@ -23,7 +23,7 @@ covers only what is specific to a React Router app.
 | `app/routes/<name>.tsx` | a route: `loader` (server), `action`, `meta`, default component. Types from `./+types/<name>` |
 | `app/components/<name>/` | **one component per folder**: `<name>.tsx` + `<name>.styles.ts` + `index.ts` |
 | `app/styles/` | **global** styles only (`global.tsx` — reset/tokens); component styles stay local |
-| `app/lib/` | clients & infra — `openapi-fetch` (`$api`), `query/` (Query client), `emotion/cache.ts` |
+| `app/lib/` | `api.ts` (binds `@lukasbriza/api` → `$api`), `query/` (Query client), `emotion/cache.ts` |
 | `app/stores/` | Zustand stores (SSR-safe factory + provider + selector hook) |
 
 Path alias `@/*` → `app/*` (`tsconfig.json` `paths` + Vite 8 native `resolve.tsconfigPaths`).
@@ -60,11 +60,11 @@ Path alias `@/*` → `app/*` (`tsconfig.json` `paths` + Vite 8 native `resolve.t
 - **Run `pnpm ts` (`react-router typegen` + `tsc`) before typecheck/lint** — React Router
   generates route types (`+types/*`, `.react-router/types/`) that the code imports.
 - `pnpm dev` (Vite) · `pnpm build` · `pnpm start` (`react-router-serve`).
-- API types: `pnpm api-schema:generate`; never hand-edit `app/lib/openapi-fetch/api.d.ts`.
+- API schema/types are owned by `@lukasbriza/api` (regenerate there); this app has no local schema.
 - SSR is on (`react-router.config.ts` → `ssr: true`); set `ssr: false` there for a SPA build.
 
 ## Don't touch
 
-- Generated: `build/`, `.react-router/`, `app/lib/openapi-fetch/api.d.ts`.
+- Generated: `build/`, `.react-router/`. API schema types live in `@lukasbriza/api`.
 - This file ships from `templates/app-react/CLAUDE.md`; edit conventions there, not in
   scaffolded copies, so changes propagate via `turbo gen` / `sync-template`.

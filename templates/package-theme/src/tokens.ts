@@ -1,17 +1,20 @@
+import { black, gray, mono, state, white } from '@lukasbriza/tokens'
 import type { PaletteOptions, Shape } from '@mui/material/styles'
 import type { SpacingOptions } from '@mui/system'
 import { createBreakpoints } from '@mui/system'
 
 // --- colors ---
-export const gray = '#27292c'
-export const black = '#151617'
-export const white = '#FFFFFF'
+// Raw brand colours come from the shared, framework-free `@lukasbriza/tokens`
+// (the single source of truth used by web AND mobile). Everything below is the
+// web/MUI-specific *composition* of those primitives. Type scale, spacing and
+// breakpoints stay here — they're web-specific (rem/MUI variants) and differ from
+// the mobile scale.
 
 export const monoChromaticPalette = {
-  color1: '#eeeeee',
-  color2: '#aeaeae',
-  color3: '#909090',
-  color4: '#5c5c5c',
+  color1: mono[1],
+  color2: mono[2],
+  color3: mono[3],
+  color4: mono[4],
 }
 
 export const primaryColors = {
@@ -34,11 +37,7 @@ export const brandColors = {
     secondary: gray,
     contrast: white,
   },
-  state: {
-    success: { primary: '#51a147', secondary: '#73976e' },
-    warning: { primary: '#e8c53c', secondary: '#d7c066' },
-    error: { primary: '#b72121', secondary: '#873434' },
-  },
+  state,
   border: {
     primary: primaryColors.main,
     activeHover: primaryColors.dark,
@@ -82,3 +81,5 @@ export const spacing: SpacingOptions = 5
 export const sizeStep = 5
 
 export const size = Object.fromEntries(Array.from({ length: 33 }, (_, index) => [`size${index}`, index * sizeStep]))
+
+export { black, gray, white } from '@lukasbriza/tokens'

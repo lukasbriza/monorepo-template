@@ -7,6 +7,7 @@
     ".": "./index.mjs",
     "./base": "./base.mjs",
     "./react": "./react.mjs",
+    "./react-native": "./react-native.mjs",
     "./nextjs": "./nextjs.mjs",
     "./nestjs": "./nestjs.mjs"
   },
@@ -15,7 +16,8 @@
     "index.mjs",
     "nestjs.mjs",
     "nextjs.mjs",
-    "react.mjs"
+    "react.mjs",
+    "react-native.mjs"
   ],
   "scripts": {
     "cleanup": "rimraf .eslintcache .turbo node_modules",

@@ -2,7 +2,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import type { Metadata } from 'next'
 
 import { getScopedI18n } from '@/i18n/server'
-import { $api } from '@/lib/openapi-fetch'
+import { $api } from '@/lib/api'
 import { getQueryClient } from '@/lib/query/query-client'
 import type { WebPage } from '@/shared/types'
 

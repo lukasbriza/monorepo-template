@@ -6,10 +6,14 @@ Shared MUI theme. Inherits monorepo conventions from the root `CLAUDE.md`.
 
 - MUI v9 (`@mui/material`, `@mui/system`, `@mui/types`), React 18.
 - Built as a library (`tsc --build tsconfig.build.json` → `dist/`), consumed by apps via `workspace:*`.
+- Depends on **`@lukasbriza/tokens`** (`workspace:*`) — the framework-free brand palette. Tokens
+  must exist first (generator order).
 
 ## Layout (src)
 
-- `tokens.ts` — design tokens: colors, `palette`, `breakpoints`, `shape` (radius), `size` scale + `spacing`.
+- `tokens.ts` — **web/MUI composition** of the shared colours: raw brand colours are imported from
+  `@lukasbriza/tokens`; this file builds `palette`, plus web-specific `breakpoints`, `shape`
+  (radius), `size` scale + `spacing` (these differ from the mobile scale, so they live here).
 - `typography.ts` — font-style constants + typography `variants` (custom `S/M/L/XL`, built-in `body1`/etc. disabled).
 - `theme.tsx` — assembles `webTheme` (`createTheme`) + `ThemeProvider` + component defaults; re-exports `useTheme`.
 - `types.ts` — token types (`WebPalette`, `WebShape`, `WebSize`, ...) **and** MUI module augmentation.

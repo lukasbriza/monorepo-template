@@ -8,7 +8,7 @@ tags: [client, data-fetching, rsc]
 
 Fetching in `useEffect` runs after render (waterfall), doesn't dedupe across instances, and
 ships fetch logic to the client. Fetch in a Server Component and pass data down; use the typed
-`openapi-fetch` client (`src/lib/openapi-fetch`) for calls that must happen on the client.
+`$api` client (`@/lib/api`, from `@lukasbriza/api`) for calls that must happen on the client.
 
 **Avoid:**
 

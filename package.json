@@ -48,5 +48,19 @@
   "packageManager": "pnpm@9.4.0",
   "engines": {
     "node": ">=22.12.0"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@expo/log-box": "56",
+        "react-native-screens": ">=4.25.0"
+      },
+      "ignoreMissing": [
+        "react-native-reanimated",
+        "react-native-gesture-handler",
+        "react-native-safe-area-context",
+        "expo-linking"
+      ]
+    }
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { $api } from '@/lib/openapi-fetch'
+import { $api } from '@/lib/api'
 
 // Typed query hook. The data is prefetched on the server (see the home page's
 // HydrationBoundary), so this renders with data already in cache — no loading flash.

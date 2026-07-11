@@ -18,7 +18,7 @@ export { RootLayout as default, generateMetadata, generateStaticParams } from '@
 | `src/modules/<feature>/` | feature pages/components (`page.tsx`, etc.) |
 | `src/layout/**` | layouts + emotion SSR `registry/` |
 | `src/i18n/**` | next-international config, `client`, `server`, `locales/` |
-| `src/lib/openapi-fetch/**` | typed API client + generated `api.d.ts` |
+| `src/lib/api.ts` | binds shared `@lukasbriza/api` → `$api` |
 | `src/shared/types.ts` | shared route types |
 
 Import via the `@/*` alias, never long relative paths.
@@ -60,8 +60,8 @@ export const HomePage: WebPage = async () => {
 
 - Runtime env via `next-runtime-env`: `env('NEXT_PUBLIC_…')` + `<PublicEnvScript />` in the root
   layout. Don't read `process.env` in client components.
-- API types are generated: edit the spec, run `pnpm api-schema:generate`; never hand-edit
-  `lib/openapi-fetch/api.d.ts`. Call through the typed `openapi-fetch` client.
+- The typed `$api` comes from the shared `@lukasbriza/api` package (schema lives there). Bind it
+  once in `src/lib/api.ts` (baseUrl from `NEXT_PUBLIC_API_BASE_URL`) and import `$api` from `@/lib/api`.
 
 ## Common Mistakes
 
@@ -71,7 +71,7 @@ export const HomePage: WebPage = async () => {
 | `next/head` for metadata | Metadata API |
 | Re-declaring page/layout prop types | `WebPage` / `AsyncWebLayout` |
 | `process.env` in a client component | `env()` from `next-runtime-env` |
-| Editing generated `api.d.ts` | `pnpm api-schema:generate` |
+| Editing the API schema by hand | regenerate in `@lukasbriza/api` |
 | Computed `middleware` matcher | plain string literal |
 
 ## State & data — pick the right tool
@@ -80,7 +80,7 @@ Don't default to a global store. Match the kind of state to its tool:
 
 | State | Use |
 |---|---|
-| Server data | Fetch in Server Components; for client fetching use TanStack Query via `openapi-react-query` (`$api` in `src/lib/openapi-fetch`) |
+| Server data | Fetch in Server Components; for client fetching use the typed `$api` (from `@/lib/api`, backed by `@lukasbriza/api`) |
 | URL state (filters, tabs, pagination) | `searchParams` — shareable, no store |
 | Form state | `react-hook-form` (+ `yup`) |
 | Local UI state | `useState` / `useReducer` |

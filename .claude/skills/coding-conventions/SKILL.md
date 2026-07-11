@@ -1,6 +1,6 @@
 ---
 name: coding-conventions
-description: Use when writing, editing, or reviewing any code in this monorepo — TypeScript, React/MUI, Next.js, or NestJS: components, hooks, routes, modules, types, state, or naming. Covers conventions on top of @lukasbriza/eslint-config; read references/<framework>.md for framework specifics.
+description: Use when writing, editing, or reviewing any code in this monorepo — TypeScript, React/MUI, Next.js, React Native (Expo), or NestJS: components, hooks, routes, modules, types, state, or naming. Covers conventions on top of @lukasbriza/eslint-config; read references/<framework>.md for framework specifics.
 ---
 
 ## Overview
@@ -13,10 +13,11 @@ tooling can't. For framework specifics, read the matching reference:
 | Working on… | Read |
 |---|---|
 | React / MUI components, hooks, styling | `references/react.md` |
+| React Native (Expo), @emotion/native, Expo Router | `references/react-native.md` |
 | Next.js App Router, RSC, i18n | `references/nextjs.md` |
 | NestJS modules, DTOs, Prisma | `references/nestjs.md` |
 
-Performance is a separate axis — see the `web-performance` skill.
+Performance is a separate axis — see the `web-performance` (web/Next) and `native-performance` (Expo/RN) skills.
 
 ## When to Use
 

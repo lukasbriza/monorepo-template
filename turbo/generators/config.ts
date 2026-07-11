@@ -321,6 +321,24 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
     ],
   })
 
+  plop.setGenerator('app-mobile', {
+    description: 'Scaffold an Expo (Expo Router, RN) app from templates/app-mobile into apps/<name>',
+    prompts: [kebabPrompt, installPrompt],
+    actions: [
+      (answers) => {
+        const { name } = answers as { name: string }
+        const destination = copyTemplate('app-mobile', path.join('apps', name))
+        renamePackage(destination, '@lukasbriza/mobile-template', `@lukasbriza/${name}`)
+        return `Created apps/${name} from templates/app-mobile`
+      },
+      (answers) => {
+        const { name, install } = answers as { name: string; install: boolean }
+        const message = finalize(`@lukasbriza/${name}`, install)
+        return `${message}\nNext: cd apps/${name} && add the router runtime deps: pnpm exec expo install expo-linking expo-constants expo-status-bar expo-system-ui react-native-safe-area-context react-native-screens react-native-reanimated react-native-worklets react-native-gesture-handler react-native-web — then pnpm exec expo install --fix to lock everything to the SDK`
+      },
+    ],
+  })
+
   plop.setGenerator('app-nest', {
     description: 'Scaffold a NestJS app from templates/app-nest into apps/<name> (optional Prisma 7)',
     prompts: [
@@ -384,11 +402,42 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
     ],
   })
 
-  plop.setGenerator('package-theme', {
-    description: 'Scaffold the shared MUI theme package from templates/package-theme into packages/theme',
+  plop.setGenerator('package-tokens', {
+    description: 'Scaffold the framework-free design tokens package from templates/package-tokens into packages/tokens',
     prompts: [installPrompt],
     actions: [
       () => {
+        copyTemplate('package-tokens', path.join('packages', 'tokens'))
+        return 'Created packages/tokens from templates/package-tokens'
+      },
+      (answers) => {
+        const { install } = answers as { install: boolean }
+        return finalize('@lukasbriza/tokens', install)
+      },
+    ],
+  })
+
+  plop.setGenerator('package-api', {
+    description: 'Scaffold the shared API package (openapi-fetch + $api) from templates/package-api into packages/api',
+    prompts: [installPrompt],
+    actions: [
+      () => {
+        copyTemplate('package-api', path.join('packages', 'api'))
+        return 'Created packages/api from templates/package-api'
+      },
+      (answers) => {
+        const { install } = answers as { install: boolean }
+        return finalize('@lukasbriza/api', install)
+      },
+    ],
+  })
+
+  plop.setGenerator('package-theme', {
+    description: 'Scaffold the shared MUI theme package from templates/package-theme into packages/theme (needs tokens)',
+    prompts: [installPrompt],
+    actions: [
+      () => {
+        requirePackages(['tokens'])
         copyTemplate('package-theme', path.join('packages', 'theme'))
         return 'Created packages/theme from templates/package-theme'
       },

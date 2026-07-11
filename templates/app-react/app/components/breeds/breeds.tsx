@@ -1,4 +1,4 @@
-import { $api } from '@/lib/openapi-fetch'
+import { $api } from '@/lib/api'
 
 import { BreedItem, BreedList } from './breeds.styles'
 

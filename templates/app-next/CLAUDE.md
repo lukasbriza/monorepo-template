@@ -9,7 +9,7 @@ covers only what is specific to a Next.js app.
 - i18n: `next-international` (`src/i18n`), locale segment `src/app/[locale]`.
 - Styling: MUI + `@emotion` with an SSR registry (`src/layout/registry`).
 - Forms: `react-hook-form` + `yup` (`@hookform/resolvers`).
-- API: `openapi-fetch` + `openapi-react-query` typed hooks (`$api`, `src/lib/openapi-fetch`).
+- API: shared **`@lukasbriza/api`** (`$api`), bound to the baseUrl once in `src/lib/api.ts`.
 - Data/state: **TanStack Query** with RSC hydration (`src/lib/query`) for server data;
   **Zustand** (SSR-safe provider, `src/stores`) for shared client UI state.
 - Public env: `NEXT_PUBLIC_*` vars, read via `process.env` (inlined at build time).
@@ -26,7 +26,7 @@ implementation in a module. No logic lives in `app/`.
 | `src/components/` | components shared across features (add when the first shared one appears) |
 | `src/hooks/` | hooks shared across features |
 | `src/layout/` | root/web layouts + emotion SSR `registry/`; wraps the app in `QueryProvider` + `UiStoreProvider` |
-| `src/lib/` | external clients & utilities — `openapi-fetch` (`$api`), `query/` (TanStack Query client + provider) |
+| `src/lib/` | `api.ts` (binds `@lukasbriza/api` → `$api`), `query/` (TanStack Query client + provider) |
 | `src/stores/` | Zustand stores (SSR-safe factory + provider + selector hook) |
 | `src/i18n/` | `next-international` config, `client`, `server`, `locales/` |
 | `src/shared/` | shared types |
@@ -66,11 +66,9 @@ Rules:
 
 ## API client
 
-- The typed client is generated from an OpenAPI schema:
-  `pnpm api-schema:generate` reads `src/lib/openapi-fetch/api.json` → writes `api.d.ts`.
-  Regenerate after the schema changes; do not hand-edit `api.d.ts`.
-- Set the real `baseUrl` in `src/lib/openapi-fetch/index.ts` (placeholder today).
-- `$api` (openapi-react-query) gives typed TanStack Query hooks. Prefer **RSC prefetch +
+- The typed `$api` comes from the shared **`@lukasbriza/api`** package (schema lives there).
+  `src/lib/api.ts` binds it to the baseUrl (`NEXT_PUBLIC_API_BASE_URL`); import `$api` from `@/lib/api`.
+- `$api` gives typed TanStack Query hooks. Prefer **RSC prefetch +
   `HydrationBoundary`** (reference: `modules/home/page.tsx`) so data ships in the initial HTML.
   State-management decision tree + SSR-safe Zustand pattern live in the `coding-conventions`
   skill (`references/nextjs.md`).
@@ -82,6 +80,6 @@ Rules:
 
 ## Don't touch
 
-- Generated: `.next/`, `next-env.d.ts`, `src/lib/openapi-fetch/api.d.ts`.
+- Generated: `.next/`, `next-env.d.ts`. API schema types live in `@lukasbriza/api`.
 - This file ships from `templates/app-next/CLAUDE.md`; edit conventions there, not in
   scaffolded copies, so changes propagate via `turbo gen` / `sync-template`.
