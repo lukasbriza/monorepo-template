@@ -97,13 +97,19 @@ pnpm format     # prettier write
   (`dist/`, `build/`, `.next/`, `.turbo/`, `coverage/`, `*.tsbuildinfo`, prisma `generated/`,
   openapi `api.d.ts`). Formatting/linting stays at commit time (husky + lint-staged) — no
   auto-format hook, which would desync in-progress `Edit` matches.
-- Knowledge graph: `/graphify` (external Claude Code skill + `graphifyy` CLI, installed
-  per-machine — `pip install graphifyy && graphify install`) builds a graph of the repo into
-  `graphify-out/` (gitignored). When navigating a large codebase, prefer querying the graph
-  (`/graphify query …`) or reading `graphify-out/wiki/` over bulk-reading files — that's where the
-  token saving comes from (negligible on a small/fresh repo; it scales with corpus size). A
-  `.husky/post-commit` hook runs `graphify . --update` to keep the graph current (no-op if
-  graphify isn't installed; backgrounded so commits stay fast).
+- Knowledge graph: the `graphifyy` CLI (installed per-machine — `pip install graphifyy`) builds a
+  graph into `graphify-out/` (gitignored, regenerable — never commit it). Build via the **terminal
+  CLI** (`graphify .`) or the `.husky/post-commit` hook (`graphify . --update`, backgrounded) — both
+  run without an agent.
+  - **Code-only by default.** `.graphifyignore` excludes docs/papers/images, so the build is
+    AST-only: no LLM, no API key, **no token cost**. (`.graphifyignore` _replaces_ the root
+    `.gitignore` for graphify, so it also re-lists deps/build/**secrets** — keep those in sync.)
+  - **Never run semantic (doc) extraction through Claude.** With no external key graphify uses the
+    _host agent itself_ as the LLM — i.e. it burns your Claude session quota summarising every
+    markdown file. If you ever want docs graphed, set `GEMINI_API_KEY` (free tier) and run the CLI in
+    a terminal; never via `/graphify` inside Claude Code, never on the Claude quota.
+  - **Never read `graphify-out/graph.json` or `graph.html` into context** (≈1 MB each). Query the
+    graph instead: `graphify query "…"`, `graphify path A B`, `graphify explain Node`.
 - Updates flow into existing projects via the `sync-template` skill: the template is a
   git remote (`template`), the last synced ref is recorded in `.claude/.template-ref`,
   and only the template's delta on owned paths is applied via 3-way merge (never a blind
