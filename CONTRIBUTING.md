@@ -14,7 +14,7 @@ or `/scaffold <type> [name]` from Claude Code (wraps `turbo gen`, validates prer
 generators are defined in `turbo/generators/config.ts`; edit the matching `templates/<type>/`, never a
 scaffolded copy. Dependency order for packages: `tokens → theme → styles → components`.
 
-Updates to the template propagate into projects built from it via the **`sync-template`** skill
+Updates to the template propagate into projects built from it via the `sync-template` skill
 (3-way merge on owned paths — never a blind overwrite).
 
 ## 🛠️ Local development
@@ -41,12 +41,6 @@ All apps and packages **should be covered by tests** where it makes sense.
 - Add a `test` script to each package's `package.json` so `pnpm test` (turbo) runs it across the workspace.
 - For containerized runs, `pnpm docker:run-tests` uses `docker/tests/docker-compose-run-tests.yaml`.
 - Aim for reliable, reproducible tests that reflect real-world usage.
-
-## 🐳 Docker
-
-Reusable build assets live in `docker/`: per-runtime Dockerfiles (`nextjs/`, `node/`, `postgres/`)
-that app images build on, plus `tests/` for containerized test runs. Keep image changes runtime-specific
-and reuse the shared Dockerfiles rather than adding per-app ones.
 
 ## ✅ Commit conventions
 
