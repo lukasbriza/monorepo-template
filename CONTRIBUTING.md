@@ -1,60 +1,65 @@
 # Contributing Guide
 
-## 📦 Repository Structure & Tooling
+## 📦 Repository structure & scaffolding
 
-This repository includes a suite of universal Dockerfiles and a custom CLI tool designed to streamline development and deployment.
-
-To launch the CLI, run the following command from the root of the repository:
+pnpm workspaces + Turborepo. Applications live in `apps/`, shared config in `packages/`, and the
+**canonical, real** project bodies in `templates/`. Nothing is hand-copied — scaffolding is
+generator-driven from `templates/` into `apps/`/`packages/`:
 
 ```bash
-pnpm run cli
+pnpm turbo gen <type>       # e.g. app-next, app-mobile, package-api  (see README.md for the list)
 ```
 
-With this CLI, you can:
+or `/scaffold <type> [name]` from Claude Code (wraps `turbo gen`, validates prerequisites). The
+generators are defined in `turbo/generators/config.ts`; edit the matching `templates/<type>/`, never a
+scaffolded copy. Dependency order for packages: `tokens → theme → styles → components`.
 
-- Fetch the latest Dockerfiles from the inherited repository
-- Update the CLI tool itself
+Updates to the template propagate into projects built from it via the `sync-template` skill
+(3-way merge on owned paths — never a blind overwrite).
 
-Please ensure you're working with the latest version of both before committing updates.
+## 🛠️ Local development
 
----
+```bash
+corepack enable && pnpm install   # installs deps + sets up husky hooks
+pnpm dev        # turbo dev
+pnpm lint       # turbo lint      ·  pnpm lint:fix
+pnpm ts         # typecheck
+pnpm format     # prettier --write
+```
 
-## 🧪 Testing Guidelines
+- Mechanical style (formatting, import order, `import type`, quotes) is **enforced** by
+  `@lukasbriza/eslint-config` + `prettier-config` — don't restate it. Semantic conventions live in the
+  `coding-conventions` skill; performance in `web-performance` / `native-performance`.
+- **Pre-commit** runs `lint-staged` (eslint + prettier + `tsc` on staged files); **post-commit** updates
+  the graphify graph. Build library packages (e.g. `tokens`, `api`) before committing code that imports
+  them, so their `dist` resolves for the pre-commit `tsc`.
 
-All applications and packages **must be covered by tests**, as long as it makes sense in the given context.
+## 🧪 Testing
 
-- Include a `test` script in your package's `package.json` so tests can be run globally across services via Docker.
-- Aim for automated, reliable, and reproducible tests.
-- Use meaningful test cases that reflect real-world usage.
+All apps and packages **should be covered by tests** where it makes sense.
 
-## 🚀 Deployment Structure
+- Add a `test` script to each package's `package.json` so `pnpm test` (turbo) runs it across the workspace.
+- For containerized runs, `pnpm docker:run-tests` uses `docker/tests/docker-compose-run-tests.yaml`.
+- Aim for reliable, reproducible tests that reflect real-world usage.
 
-Deployment is configured using two distinct Docker Compose files:
+## ✅ Commit conventions
 
-- `docker-compose-local.yaml` - for local testing without need of exhausting .env configuration
-- `docker-compose-test.yaml` – for testing and QA environments
-- `docker-compose-prod.yaml` – for production deployments
-
-Ensure your changes support both environments or clearly specify if they are intended for only one.
-
----
-
-## ✅ Commit Conventions
-
-We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. This standard makes commit history readable and automates versioning and changelog generation.
+We follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), **enforced** by
+commitlint on the `commit-msg` hook (`@commitlint/config-conventional`). Commits carry **no AI
+attribution** (`includeCoAuthoredBy: false`).
 
 **Examples:**
 
 ```
-feat(cli): add update command for Dockerfiles
-fix(api): resolve crash when fetching empty payload
-chore(deps): upgrade pnpm to latest version
+feat(app-mobile): add typed routes and error boundary
+fix(api): align createApiClient generic with openapi-fetch
+chore(deps): bump expo to SDK 56
 ```
 
----
+The `commit-and-pr` skill produces messages that pass the hook plus a consistent PR shape.
 
-## 🧭 Final Notes
+## 🧭 Final notes
 
-- Always create a branch for your feature or fix.
-- Keep pull requests focused and small – one purpose per PR.
-- Follow clean code principles: readable, maintainable, and testable code.
+- Always branch for a feature or fix; keep PRs focused — one purpose per PR.
+- Match existing conventions; flag inconsistencies rather than introducing a new style.
+- Readable, maintainable, testable code over cleverness.

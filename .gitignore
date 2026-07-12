@@ -37,6 +37,9 @@ out/
 build
 dist
 
+# graphify knowledge graph (generated; rebuild with /graphify)
+graphify-out/
+
 
 # Debug
 npm-debug.log*

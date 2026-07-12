@@ -3,6 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**/*", "tsconfig.tsbuildinfo", "tsconfig.build.tsbuildinfo"]
     },
     "lint": {
@@ -11,7 +12,7 @@
     },
     "lint:fix": {
       "dependsOn": ["^build"],
-      "outputs": [".eslintchache"]
+      "outputs": [".eslintcache"]
     },
     "dev": {
       "cache": false,
@@ -20,6 +21,10 @@
     "ts": {
       "dependsOn": ["^build"],
       "outputs": ["tsconfig.tsbuildinfo"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
     },
     "cleanup": {
       "cache": false
