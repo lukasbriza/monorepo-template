@@ -17,6 +17,16 @@ pnpm install
 pnpm turbo gen app-next        # scaffold your first app (see below)
 ```
 
+Optional — develop inside a consistent Linux toolchain (stay in your own editor; output streams to
+your terminal):
+
+```bash
+pnpm docker:dev     # pnpm install + pnpm dev inside the container, ports published
+pnpm docker:shell   # interactive Linux shell in the repo
+```
+
+Expo/React Native work stays on the host (it needs USB devices/emulators and Metro).
+
 ## Scaffolding — `turbo gen`
 
 Everything is generated from `templates/` into `apps/` or `packages/` (never hand-copied):
@@ -39,14 +49,14 @@ Or `/scaffold <type> [name]` from Claude Code (wraps `turbo gen`, validates prer
 
 ## What's inside
 
-| Path                | Holds                                                                            |
-| ------------------- | -------------------------------------------------------------------------------- |
-| `apps/`             | your applications (scaffolded)                                                   |
-| `packages/`         | always-on config packages: `eslint-config`, `prettier-config`, `ts-config`       |
-| `templates/`        | canonical sources the generators copy (also workspaces, for full type-awareness) |
-| `turbo/generators/` | the plop generators (`config.ts`)                                                |
-| `docker/`           | per-runtime Dockerfiles (`nextjs`, `node`, `postgres`) + `tests/` compose        |
-| `.claude/`          | in-repo AI workflow — skills, agents, commands, hooks                            |
+| Path                | Holds                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| `apps/`             | your applications (scaffolded)                                                             |
+| `packages/`         | always-on config packages: `eslint-config`, `prettier-config`, `ts-config`                 |
+| `templates/`        | canonical sources the generators copy (also workspaces, for full type-awareness)           |
+| `turbo/generators/` | the plop generators (`config.ts`)                                                          |
+| `docker/`           | `dev/` (Linux dev environment, run via `pnpm docker:*`) + per-runtime **ship** Dockerfiles |
+| `.claude/`          | in-repo AI workflow — skills, agents, commands, hooks                                      |
 
 ## Shared building blocks
 

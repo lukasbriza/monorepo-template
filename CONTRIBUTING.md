@@ -39,8 +39,32 @@ pnpm format     # prettier --write
 All apps and packages **should be covered by tests** where it makes sense.
 
 - Add a `test` script to each package's `package.json` so `pnpm test` (turbo) runs it across the workspace.
-- For containerized runs, `pnpm docker:run-tests` uses `docker/tests/docker-compose-run-tests.yaml`.
-- Aim for reliable, reproducible tests that reflect real-world usage.
+- Aim for reliable, reproducible tests that reflect real-world usage. Run them in the dev container
+  (below) if you need a Linux-consistent environment.
+
+## 🐳 Docker
+
+Two separate concerns, both under `docker/`:
+
+- **Develop** — `docker/dev/` (Dockerfile + compose) gives one consistent Linux toolchain
+  (Node 22 + pnpm) to develop against, whatever the host OS. No `.devcontainer`: you stay in your own
+  editor and drive it from the root scripts, with output streaming to your terminal.
+
+  ```bash
+  pnpm docker:dev     # pnpm install + pnpm dev in the container (ports 3000 / 5173 / 6006 published)
+  pnpm docker:shell   # interactive Linux shell in the repo
+  pnpm docker:build   # rebuild the dev image after changing docker/dev/Dockerfile
+  ```
+
+  The repo is bind-mounted, so edits on the host apply instantly. `node_modules` and the pnpm store
+  live on **named volumes**, so Linux binaries never mix with host-OS ones. **Expo/React Native stays
+  on the host** — it needs USB devices/emulators and Metro.
+
+- **Ship** — the per-runtime Dockerfiles (`nextjs/`, `node/`, `node/prisma/`, `postgres/`, `mongodb/`)
+  are the recipes CI builds app images from. Those images are OCI-standard: k3s runs them with its
+  embedded **containerd**, so no Docker daemon is needed on the cluster.
+
+Keep image changes runtime-specific and reuse the shared Dockerfiles rather than adding per-app ones.
 
 ## ✅ Commit conventions
 
