@@ -21,9 +21,12 @@ Optional — develop inside a consistent Linux toolchain (stay in your own edito
 your terminal):
 
 ```bash
-pnpm docker:dev     # pnpm install + pnpm dev inside the container, ports published
-pnpm docker:shell   # interactive Linux shell in the repo
+pnpm docker:dev     # installs deps, then drops you into a Linux shell (ports published)
+pnpm docker:shell   # straight into the shell, skipping the install
 ```
+
+Inside, work as usual — `pnpm dev`, `pnpm lint`, `pnpm test` — all running on Linux with output in
+your terminal. `exit` leaves; the container is disposable, your repo and caches persist.
 
 Expo/React Native work stays on the host (it needs USB devices/emulators and Metro).
 

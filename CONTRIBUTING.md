@@ -51,10 +51,14 @@ Two separate concerns, both under `docker/`:
   editor and drive it from the root scripts, with output streaming to your terminal.
 
   ```bash
-  pnpm docker:dev     # pnpm install + pnpm dev in the container (ports 3000 / 5173 / 6006 published)
-  pnpm docker:shell   # interactive Linux shell in the repo
+  pnpm docker:dev     # installs deps, then drops you into a Linux shell (ports 3000 / 5173 / 6006)
+  pnpm docker:shell   # straight into the shell, skipping the install
   pnpm docker:build   # rebuild the dev image after changing docker/dev/Dockerfile
   ```
+
+  You land in `/workspace` as the `node` user and work as usual (`pnpm dev`, `pnpm lint`, `pnpm test`)
+  — on Linux, with output in your terminal. `exit` leaves; the container is disposable (`--rm`), while
+  the repo, `node_modules` and the pnpm store persist.
 
   The repo is bind-mounted, so edits on the host apply instantly. `node_modules` and the pnpm store
   live on **named volumes**, so Linux binaries never mix with host-OS ones. **Expo/React Native stays

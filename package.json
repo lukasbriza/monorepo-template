@@ -16,7 +16,7 @@
     "postcleanup": "rimraf .eslintcache tsconfig.tsbuildinfo node_modules",
     "dev": "turbo dev --filter=\"./apps/*\" --filter=\"./packages/*\"",
     "docker:build": "docker compose -f docker/dev/docker-compose.yaml build",
-    "docker:dev": "docker compose -f docker/dev/docker-compose.yaml run --rm --service-ports dev sh -c \"pnpm install && pnpm dev\"",
+    "docker:dev": "docker compose -f docker/dev/docker-compose.yaml run --rm --service-ports dev sh -c \"pnpm install && exec bash\"",
     "docker:shell": "docker compose -f docker/dev/docker-compose.yaml run --rm --service-ports dev bash",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint --no-daemon",
