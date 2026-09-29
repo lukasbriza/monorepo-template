@@ -47,7 +47,17 @@ pnpm turbo gen package-styles      # styled helpers (needs theme)
 pnpm turbo gen package-components  # component library (needs theme + styles)
 ```
 
-Or `/scaffold <type> [name]` from Claude Code (wraps `turbo gen`, validates prerequisites).
+Pass answers with `--args` instead of typing into the interactive prompt — it's scriptable and
+avoids turbo's interactive stdin dropping keystrokes on Windows. Order = the generator's prompts
+(`<name> <install>` for apps, `<install>` for fixed-folder packages; booleans are `true`/`false`):
+
+```bash
+pnpm turbo gen app-next --args my-web true
+pnpm turbo gen app-nest --args my-api true true   # name, +Prisma, install
+pnpm turbo gen package-api --args true
+```
+
+Or `/scaffold <type> [name]` from Claude Code (wraps `turbo gen` with `--args`, validates prerequisites).
 **Dependency order:** `tokens → theme → styles → components`.
 
 ## What's inside
