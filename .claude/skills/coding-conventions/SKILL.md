@@ -70,6 +70,9 @@ Handler naming:
 - **No nested ternaries** (enforced) — use `if / else if` or early returns. A single short
   ternary in JSX or a `const` is fine.
 - Prefer `.map/.filter/.reduce/.forEach`; use `for…of` only for `break`/`continue` or sequential `await`.
+- **No `await` inside an argument** (`toView(await findOwned(id))`, `fn(a, await b())`): await into a named
+  `const` first, then pass it, so each line does one thing. In tests, assert a promise with
+  `await expect(promise).resolves.toEqual(…)`, not `expect(await promise)`.
 - `?.` + `??` for null/undefined; be explicit (`=== null`) only when the distinction matters.
 
 ## Comments
