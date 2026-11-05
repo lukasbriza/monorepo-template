@@ -92,6 +92,12 @@ pnpm format     # prettier write
   the requester, produces a scoped plan + roadmap, decomposes into tasks, and writes them as GitHub
   issues on the repo's Project (reuse the linked Project or create one). GitHub is the source of
   truth; `references/github.md` holds the `gh` playbook.
+- Output style (`.claude/output-styles/quick-scan.md`, selected by `outputStyle` in the
+  committed `.claude/settings.json`): short, scannable Czech-first replies with a fixed section
+  order (answer → 🔴 needs you → 🟢 done → 🟠 open → 🔵 progress → 🟡 watch out → ⚪ detail).
+  `outputStyle` must match the style's `name:` exactly, or Claude Code silently falls back to
+  the default. A per-repo `/config` choice lands in gitignored `settings.local.json` and overrides
+  this one. Subagents don't receive output styles; the style loads at session start (`/clear`).
 - Hooks (`.claude/settings.json`, committed): a `PreToolUse` guard
   (`.claude/hooks/guard-generated.mjs`) blocks `Write`/`Edit` into generated/build output
   (`dist/`, `build/`, `.next/`, `.turbo/`, `coverage/`, `*.tsbuildinfo`, prisma `generated/`,
