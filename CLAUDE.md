@@ -92,6 +92,10 @@ pnpm format     # prettier write
   the requester, produces a scoped plan + roadmap, decomposes into tasks, and writes them as GitHub
   issues on the repo's Project (reuse the linked Project or create one). GitHub is the source of
   truth; `references/github.md` holds the `gh` playbook.
+- `deploy-k8s` (`.claude/skills/deploy-k8s`) — Helm chart, tag-triggered release workflow
+  (build-push or deploy-only), Infisical wiring and the ArgoCD `Application` hand-off for one
+  app. Repo-independent: cluster values live in one "Cluster facts" table as defaults, which a
+  project's `CLAUDE.md` overrides; templates in `references/templates.md` use placeholders.
 - Output style (`.claude/output-styles/quick-scan.md`, selected by `outputStyle` in the
   committed `.claude/settings.json`): short, scannable Czech-first replies with a fixed section
   order (answer → 🔴 needs you → 🟢 done → 🟠 open → 🔵 progress → 🟡 watch out → ⚪ detail).
