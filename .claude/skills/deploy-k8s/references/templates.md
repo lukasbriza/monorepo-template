@@ -243,6 +243,126 @@ spec:
 
 Fill `infisical.secrets` in `values.yaml`, e.g. `DATABASE_URL: DATABASE_URL`.
 
+## Scale to zero on demand (KEDA HTTP Add-on)
+
+Only when the user chose on-demand scale to zero (see SKILL.md). Requires `ingress.enabled`
+and `ingress.host`. Resource names use `{{ .Release.Name }}`.
+
+### values.yaml (append)
+
+```yaml
+# Needs KEDA and the HTTP Add-on on the cluster. Keep false for the first sync,
+# set true in values-prod.yaml once the app works.
+scaleToZero:
+  enabled: false
+  minReplicas: 0
+  maxReplicas: 1
+  # Seconds without matching requests before scaling back down to 0.
+  cooldownPeriod: 300
+  # Requests per second, averaged over `window`, that justify scaling up.
+  targetRequestRate: 5
+  window: 1m
+```
+
+### templates/ingress.yaml (backend branch)
+
+Replace the `backend.service` block of the Ingress template with:
+
+```yaml
+              service:
+                {{- if .Values.scaleToZero.enabled }}
+                name: {{ .Release.Name }}-keda-proxy
+                port:
+                  number: 8080
+                {{- else }}
+                name: {{ .Release.Name }}
+                port:
+                  number: {{ .Values.service.port }}
+                {{- end }}
+```
+
+### templates/keda-proxy.yaml
+
+```yaml
+{{- if .Values.scaleToZero.enabled }}
+# An Ingress backend cannot reference a Service in another namespace. This ExternalName
+# Service resolves to the KEDA HTTP Add-on interceptor proxy.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-keda-proxy
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: ExternalName
+  externalName: keda-add-ons-http-interceptor-proxy.keda.svc.cluster.local
+  ports:
+    - port: 8080
+{{- end }}
+```
+
+### templates/scaletozero.yaml
+
+```yaml
+{{- if .Values.scaleToZero.enabled }}
+# Tells the interceptor which requests belong to this app and which metric to report.
+apiVersion: http.keda.sh/v1beta1
+kind: InterceptorRoute
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  target:
+    service: {{ .Release.Name }}
+    port: {{ .Values.service.port }}
+  # A rule without `paths` matches only the literal root. The explicit "/" prefix
+  # covers every path.
+  rules:
+    - hosts: [{{ .Values.ingress.host | quote }}]
+      paths:
+        - value: /
+  scalingMetric:
+    requestRate:
+      targetValue: {{ .Values.scaleToZero.targetRequestRate }}
+      window: {{ .Values.scaleToZero.window }}
+      granularity: 1s
+  # Shown while the pod starts. The ConfigMap must exist in this namespace.
+  coldStart:
+    placeholder:
+      response:
+        bodyFromConfigMap:
+          name: coldstart-page
+          key: index.html
+        headers:
+          Refresh: "3"
+---
+# Scales the app's Deployment (same name as the release) between 0 and maxReplicas
+# by the request rate the interceptor reports.
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    name: {{ .Release.Name }}
+  minReplicaCount: {{ .Values.scaleToZero.minReplicas }}
+  maxReplicaCount: {{ .Values.scaleToZero.maxReplicas }}
+  cooldownPeriod: {{ .Values.scaleToZero.cooldownPeriod }}
+  triggers:
+    - type: external-push
+      metadata:
+        scalerAddress: keda-add-ons-http-external-scaler.keda:9090
+        interceptorRoute: {{ .Release.Name }}
+{{- end }}
+```
+
+### values-prod.yaml (after the first sync works)
+
+```yaml
+scaleToZero:
+  enabled: true
+```
+
 ## .github/workflows/<name>-build-push.yml (turbo app or local Dockerfile)
 
 The block below is for a turbo app: context `.`, a Dockerfile from `docker/`, build args

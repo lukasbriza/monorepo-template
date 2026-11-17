@@ -27,6 +27,7 @@ those win. Each placeholder in the templates maps to a row here.
 | ArgoCD | `<argocd-server>` | `argocd.lukasbriza.eu` (gRPC-web), token in GitHub secret `ARGOCD_AUTH_TOKEN` |
 | Git | `<repo-url>`, `<branch>` | read from the repo: `git remote get-url origin`, default branch from `git symbolic-ref refs/remotes/origin/HEAD` |
 | Namespace | — | `<name>`, created by ArgoCD (`CreateNamespace=true`) |
+| Scale to zero | — | KEDA with the HTTP Add-on in namespace `keda`. Interceptor Service `keda-add-ons-http-interceptor-proxy:8080`, external scaler `keda-add-ons-http-external-scaler.keda:9090`. Traefik allows `ExternalName` Services. ConfigMap `coldstart-page` (key `index.html`) must exist in the app namespace: the user adds the namespace to the cold-start page chart in the cluster repo |
 
 ## App types
 
@@ -60,6 +61,7 @@ decide per app and record the choice in the project's `CLAUDE.md`.
 | `.github/workflows/<name>-build-push.yml` or `<name>-deploy.yml` | release on a `<name>-v*` tag, ends with ArgoCD sync | you |
 | GitOps repo: `<name>.yaml` among the Application manifests | ArgoCD `Application` | **the user**, from the manifest you print |
 | Infisical `<infisical-env>` `/<name>` | real secrets | **the user** |
+| Cluster repo: cold-start page chart values | app namespace for `coldstart-page` (on-demand scale to zero only) | **the user** |
 
 Never create ArgoCD or cluster resources in this repo.
 
@@ -101,27 +103,62 @@ Never create ArgoCD or cluster resources in this repo.
 
 ## Scale to zero
 
-Use it when the app is deployed but must not run yet, or must stay off. Treat the cluster
-as having no autoscaler that starts a workload on a request. Scale to zero is a fixed
-`replicas: 0` in git, not a runtime feature. Do not add KEDA, an HPA or any autoscaler
-unless the user asks.
+Two modes. Ask the user which one. Never choose silently.
+
+| Mode | Behaviour | Use when |
+|---|---|---|
+| Fixed zero | `replicas: 0` in git. Nothing wakes the app. | The app is deployed but must not run yet. |
+| On demand (KEDA) | The first request starts the pod. It stops after an idle period. | Low-traffic app where a delay of several seconds on the first request is fine. |
+
+### Fixed zero
 
 - **Values.** Every workload the chart ships reads its replica count from values:
-  `replicas` for the app, and `<component>.replicas` for each database or cache
+  `replicas` for the app, `<component>.replicas` for each database or cache
   (e.g. `postgres.replicas`). Never hardcode a replica count in a template.
 - **Switch.** Set the values to `0` in `values-prod.yaml`. Keep `values.yaml` at `1`.
 - **Not `kubectl scale`.** The next sync resets it, and automated sync with `selfHeal`
   reverts it at once. Change the value in git.
 - **Wake up.** Set the values back to `1` in `values-prod.yaml`, push to `<branch>`, then
   sync: push a `<name>-v*` tag or run the workflow with `workflow_dispatch`.
-- **Data.** PVCs stay at zero replicas, so data survives. A StatefulSet's
-  `volumeClaimTemplates` PVCs also stay.
-- **Init containers** (e.g. database migrations) run when a pod starts, so they do not
-  run at zero. They run on wake-up.
-- **Ingress** stays in place. Traefik answers 503 while no pod is running.
-- **Releases.** A `<name>-v*` tag on a scaled-to-zero app still builds, bumps the tag and
-  syncs. No pod starts until the values change.
-- Record in the app's `CLAUDE.md` that the app is scaled to zero and how to wake it.
+- PVCs stay at zero replicas, so data survives. Init containers (e.g. migrations) run
+  when a pod starts, so not at zero. Traefik answers 503 while no pod runs.
+
+### On demand (KEDA HTTP Add-on)
+
+Templates: [references/templates.md](references/templates.md), section "Scale to zero on demand".
+
+How it works: the Ingress backend is an `ExternalName` Service in the app namespace. It
+resolves to the interceptor proxy in `keda`. An `InterceptorRoute` names the host, the
+target Service and the scaling metric. A `ScaledObject` scales the app's Deployment
+between `minReplicas` (0) and `maxReplicas`. The interceptor holds the first request
+while the pod starts and shows the cold-start page meanwhile.
+
+1. Add the `scaleToZero` block to `values.yaml` with `enabled: false`.
+2. Add `templates/keda-proxy.yaml`, `templates/scaletozero.yaml` and the
+   `scaleToZero.enabled` branch in `templates/ingress.yaml`.
+3. `ingress.enabled: true` and `ingress.host` are required: the `InterceptorRoute` matches
+   on the host.
+4. Hand-off, in addition to the Application manifest: the user adds the app namespace to
+   the cold-start page chart in the cluster repo and upgrades that release. Without it
+   the route falls back to KEDA's plain placeholder.
+5. First sync with `enabled: false`. Set `scaleToZero.enabled: true` in `values-prod.yaml`
+   only after the app works.
+6. Verify (user runs): after the cooldown `kubectl get deploy -n <name>` shows `0/0`.
+   A request to the hostname wakes it.
+
+Rules:
+
+- KEDA scales only the app's Deployment. A database, cache or any other workload in the
+  chart keeps running. Do not set those to `0`, the app could not start.
+- Init containers (migrations) run on every wake. The cold start is longer.
+- Not a fit: apps that must open instantly, apps with long-lived connections (SSE,
+  websockets) that never look idle, apps other apps depend on (an identity provider).
+- Keep `replicas: 1` in values. KEDA overrides it at runtime. A sync sets it to `1` again
+  until the cooldown passes, so every release wakes the app. Keep automated sync off.
+- Use `InterceptorRoute` + `ScaledObject`. The older `HTTPScaledObject` is deprecated.
+  This API changes fast: tell the user to recheck the HTTP Add-on docs when copying.
+
+Record the chosen mode in the app's `CLAUDE.md`, with how to wake or test it.
 
 ## Gotchas
 
